@@ -1,0 +1,1854 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Моя карта путешествий</title>
+<meta name="description" content="Школьные поездки на карте: фото, истории и главное о каждой поездке.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Caveat:wght@400;600&display=swap">
+<style>
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+.leaflet-tile::selection {
+	background: transparent;
+}
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+.leaflet-container img.leaflet-tile {
+	mix-blend-mode: plus-lighter;
+}
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+.leaflet-pane         { z-index: 400; }
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+.leaflet-default-icon-path { 
+	background-image: url(images/marker-icon.png);
+	}
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+	margin: -10px auto 0;
+	pointer-events: auto;
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+@media print {
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+/* Layout: интерактивная карта во всю ширину сверху, под ней раскрытый «разворот» выбранной поездки */
+:root{
+  --paper:#eef1f4; --sheet:#ffffff; --ink:#1b2a3a; --muted:#5d6b7a; --line:#d3dae2; --grid:#dfe5ec;
+  --accent:#7b68e6; --accent-soft:#ece8fd; --green:#4f9e22; --green-bright:#7ccf45; --sea:#cfe0ee; --pin-home:#1b2a3a; --ok:#2f7d5b;
+  --land:#f3f4ef; --coast:#a9c4dc; --urban:#e4e0ea; --river:#8fb6d9; --region:#cdc6db; --border:#9a8fb8; --road:#e3b77c; --rail:#8d8d99; --label:#3b4654;
+  /* единый шрифт для всей страницы */
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-display:var(--f-body); --f-serif:var(--f-body); --f-mono:var(--f-body);
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#111821; --sheet:#18222e; --ink:#e7edf3; --muted:#9aa8b6; --line:#2b3947; --grid:#1f2b38;
+  --accent:#a99cf7; --accent-soft:#2a2550; --green:#8bdd52; --green-bright:#8bdd52; --sea:#0f1a24; --pin-home:#e7edf3; --ok:#5cc79a; --land:#1c2631; --coast:#2b4256; --urban:#2b2f3f; --river:#3f6a8f; --region:#363b4e; --border:#6c6390; --road:#8a6a3f; --rail:#5a5f6d; --label:#c3ccd6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#111821; --sheet:#18222e; --ink:#e7edf3; --muted:#9aa8b6; --line:#2b3947; --grid:#1f2b38;
+  --accent:#a99cf7; --accent-soft:#2a2550; --green:#8bdd52; --green-bright:#8bdd52; --sea:#0f1a24; --pin-home:#e7edf3; --ok:#5cc79a; --land:#1c2631; --coast:#2b4256; --urban:#2b2f3f; --river:#3f6a8f; --region:#363b4e; --border:#6c6390; --road:#8a6a3f; --rail:#5a5f6d; --label:#c3ccd6; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:20px 60px;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(24px,5vw,38px);line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1 .lilac{color:var(--accent)}
+h1 .green{color:var(--green);display:block}
+.stat b{color:var(--green)}
+.trip h2{color:var(--accent)}
+.chapter h3{color:var(--green)}
+.sub{color:var(--muted);margin:6px 0 0;max-width:52ch}
+.stats{display:flex;gap:18px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column}
+.stat b{font-family:var(--f-display);font-size:22px;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat small{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+button,.btn{font:inherit;font-weight:700;font-size:14px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.ghost{border-color:var(--line)}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+.mapcard{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.maptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;border-radius:0;font-weight:500;padding:6px 12px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.mapbox{position:relative;background:var(--sea)}
+#map{display:block;width:100%;height:clamp(380px,62vh,620px);background:var(--sea);z-index:0}
+.leaflet-container{background:var(--sea);font-family:var(--f-body);font-size:13px}
+#map.picking,#map.picking .leaflet-interactive{cursor:crosshair}
+.leaflet-control-zoom a{background:var(--sheet);color:var(--ink);border-color:var(--line)!important}
+.leaflet-control-zoom a:hover{background:var(--paper)}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--sheet) 80%,transparent)!important;color:var(--muted)!important;font-size:10px}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--sheet);color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.22)}
+.leaflet-popup-content{margin:12px 14px;font-size:13px;line-height:1.45}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.city{pointer-events:none}
+.city i{position:absolute;left:0;top:0;width:6px;height:6px;border-radius:50%;background:var(--label);opacity:.7}
+.city span{position:absolute;left:9px;top:-7px;white-space:nowrap;font-size:11.5px;font-weight:600;color:var(--label);text-shadow:0 0 3px var(--land),0 0 3px var(--land),0 0 2px var(--land)}
+.city.big span{font-size:13px;font-weight:800}
+.home-pin{pointer-events:none}
+.home-pin i{position:absolute;left:0;top:0;width:14px;height:14px;background:var(--pin-home);transform:rotate(45deg);border:2px solid var(--sheet)}
+.home-pin span{position:absolute;left:20px;top:-2px;white-space:nowrap;font-weight:800;font-size:13px;color:var(--ink);text-shadow:0 0 3px var(--land),0 0 3px var(--land)}
+.tp{position:relative;width:48px;height:56px;transition:transform .15s}
+.tp-img{width:48px;height:48px;border-radius:50%;border:3px solid var(--accent);background:var(--accent);overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,.28)}
+.tp-img img{width:100%;height:100%;object-fit:cover;display:block}
+.tp::after{content:"";position:absolute;left:50%;top:45px;transform:translateX(-50%);border:7px solid transparent;border-top:9px solid var(--accent)}
+.tp b{position:absolute;top:-5px;right:-7px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--green);color:#fff;font-size:11px;line-height:20px;text-align:center;border:2px solid var(--sheet)}
+.tp-name{position:absolute;left:54px;top:12px;white-space:nowrap;font-weight:800;font-size:13px;background:var(--sheet);color:var(--ink);padding:3px 9px;border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.trip-pin.sel .tp{transform:scale(1.12);transform-origin:50% 100%}
+.trip-pin.sel .tp-img{border-color:var(--green)}
+.trip-pin.sel .tp::after{border-top-color:var(--green)}
+.spot i{position:absolute;left:0;top:0;width:14px;height:14px;border-radius:50%;background:var(--green);border:3px solid var(--sheet);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.spot span{position:absolute;left:19px;top:-3px;white-space:nowrap;font-weight:700;font-size:12.5px;color:var(--ink);text-shadow:0 0 3px var(--land),0 0 3px var(--land),0 0 2px var(--land)}
+.spot em{font-style:normal;font-weight:500;color:var(--muted)}
+.pop h5{margin:0 0 2px;font-size:15px;font-weight:800;color:var(--accent)}
+.pop .pm{color:var(--muted);font-size:12px;margin-bottom:8px}
+.pop .pth{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:10px}
+.pop .pth img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;display:block}
+.pop .row{gap:6px}
+.pop button{font-size:12.5px;padding:5px 11px}
+#map.zoomed .trip-pin.has-places{opacity:0;pointer-events:none}
+.trip-pin{transition:opacity .2s}
+.spot.left span{left:auto;right:19px;text-align:right}
+.spot{cursor:pointer}
+.pop .pop-one{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;margin:2px 0 8px}
+.pop .pop-cap{margin:0 0 10px;font-weight:700;font-size:13px;line-height:1.4}
+.hint{z-index:1001;position:absolute;left:12px;right:12px;bottom:12px;background:var(--ink);color:var(--sheet);border-radius:8px;padding:8px 12px;font-size:13px}
+.coords{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+/* поездка */
+.trip{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:22px}
+.trip-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-start}
+.stamp{display:inline-flex;flex-direction:column;border:2px solid var(--accent);color:var(--accent);border-radius:6px;padding:4px 10px;transform:rotate(-3deg);font-family:var(--f-mono);font-size:11px;line-height:1.35;text-transform:uppercase;letter-spacing:.05em}
+.trip h2{font-family:var(--f-display);font-weight:800;font-size:clamp(20px,4vw,28px);margin:6px 0 2px;text-wrap:balance}
+.meta{color:var(--muted);font-size:14px}
+.chapter{display:flex;flex-direction:column;gap:10px}
+.chapter h3{font-family:var(--f-display);font-weight:800;font-size:17px;margin:0;display:flex;gap:10px;align-items:baseline}
+.chapter h3 small{font-family:var(--f-mono);font-size:11px;color:var(--muted);font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.ph{position:relative;aspect-ratio:3/4;max-width:100%;border-radius:6px;overflow:hidden;background:var(--grid);cursor:zoom-in;border:0;padding:0;display:block;width:100%}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.ph:hover img{transform:scale(1.03)}
+figcaption{font-size:13px;color:var(--muted);line-height:1.4;display:flex;gap:6px;align-items:flex-start;justify-content:space-between}
+figcaption span,.capt{min-width:0}
+.capt-short{color:var(--ink);font-weight:600;font-size:13.5px;line-height:1.4}
+.more{margin-top:3px}
+.more summary{cursor:pointer;list-style:none;color:var(--accent);font-weight:700;font-size:12px;display:inline-block;padding:2px 0}
+.more summary::-webkit-details-marker{display:none}
+.more summary::after{content:" ▾"}
+.more[open] summary::after{content:" ▴"}
+.more-body{margin-top:4px;color:var(--muted);font-size:12.5px;line-height:1.5}
+.more-facts{border-top:1px solid color-mix(in srgb,var(--accent) 25%,transparent);padding-top:10px}
+.more-facts>summary{cursor:pointer;list-style:none;color:var(--accent);font-weight:800;font-size:13.5px}
+.more-facts>summary::-webkit-details-marker{display:none}
+.more-facts>summary::after{content:" ▾"}
+.more-facts[open]>summary::after{content:" ▴"}
+.more-facts .factgrid{margin-top:14px}
+.edit{border:0;padding:2px 4px;font-size:12px;color:var(--muted);font-weight:500;border-radius:4px;flex:none}
+.edit:hover{color:var(--accent)}
+.facts{background:var(--accent-soft);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.facts h4{margin:0;font-family:var(--f-display);font-weight:800;font-size:15px;color:var(--accent)}
+.factgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px 24px}
+.fact{min-width:0}
+.fact b{display:block;font-size:14px;margin-bottom:3px}
+.fact p{margin:0;font-size:14px;line-height:1.55;color:var(--ink)}
+.fact q{font-weight:500;quotes:"«" "»"}
+.facts small{font-size:12px;color:var(--muted)}
+.epi{align-self:center;max-width:36rem;text-align:center;padding-block:14px 4px;gap:10px}
+.epi blockquote{margin:0;font-family:var(--f-serif);font-weight:500;font-size:clamp(19px,3.4vw,25px);line-height:1.45;color:var(--accent);text-wrap:balance}
+.epi figcaption{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.epi-q{margin:8px 0 0;font-weight:700;color:var(--green)}
+.notes{display:grid;grid-template-columns:1fr;gap:12px}
+.note textarea{min-height:160px;font-size:15px;line-height:1.6}
+.note{display:flex;flex-direction:column;gap:6px;background:var(--paper);border-radius:8px;padding:12px}
+.note label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+textarea,input,select{font:inherit;color:var(--ink);background:var(--sheet);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:70px}
+.note textarea{background:transparent;border-color:transparent;padding:4px 0}
+.note textarea:focus{border-color:var(--line);background:var(--sheet);padding:4px 8px}
+.saved{font-size:12px;color:var(--ok);min-height:1em}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.empty{color:var(--muted);text-align:center;padding:30px 10px}
+.list{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);font-weight:500;padding:5px 12px;font-size:13px}
+.chip[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+/* диалоги */
+dialog{border:0;border-radius:12px;padding:0;background:var(--sheet);color:var(--ink);width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 32px)}
+dialog::backdrop{background:rgba(10,16,24,.55)}
+.dlg{padding:20px;display:flex;flex-direction:column;gap:12px}
+.dlg h3{font-family:var(--f-display);font-weight:500;margin:0;font-size:18px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:13px;font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{color:var(--accent);font-size:13px;min-height:1em}
+#lb{width:min(1000px,calc(100vw - 16px));background:#0d1117;color:#eef}
+#lb .lbin{display:flex;flex-direction:column}
+#lb img{max-height:75vh;width:100%;object-fit:contain;display:block;background:#0d1117}
+#lb .lbbar{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px}
+#lb .lbbar p{margin:0;font-size:14px;min-width:0}
+#lb button{border-color:#556;color:#eef}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--sheet);padding:10px 16px;border-radius:8px;font-size:14px;z-index:20;max-width:calc(100vw - 32px)}
+.ro{font-size:13px;color:var(--muted)}
+.prog{font-size:13px;color:var(--muted)}
+@media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.trip{padding:14px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ===== Тема «Старинный атлас»: журнальная вёрстка, пергамент, чернила ===== */
+/* Layout: шапка-«титул» по центру, карта как лист атласа, альбом поездки — журнальный разворот */
+:root{
+  --paper:#efebe2; --sheet:#f7f4ed; --ink:#25211b; --muted:#6b6255; --line:#d3cbbb; --grid:#e3dccd;
+  --accent:#8a2f1c; --accent-soft:#efe2d6; --green:#2e5e3e; --green-bright:#2e5e3e; --pin-home:#25211b; --ok:#2e5e3e;
+  --sea:#c8d2cd; --land:#efe5cf; --coast:#7d6b53; --urban:#e4cdb6; --river:#6d8c9c; --region:#bba98c; --border:#8a6f57; --road:#b9805f; --rail:#5b5248; --label:#3d3326; --grat:#9b8a70;
+  --grain:.30;
+  --f-body:"PT Serif",Georgia,"Times New Roman",serif;
+  --f-display:var(--f-body); --f-serif:var(--f-body); --f-mono:var(--f-body);
+  --r:2px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1b1814; --sheet:#23201b; --ink:#ebe3d3; --muted:#a89d8b; --line:#3b352d; --grid:#2e2923;
+  --accent:#d9917a; --accent-soft:#33261f; --green:#93c39a; --green-bright:#93c39a; --pin-home:#ebe3d3; --ok:#93c39a;
+  --sea:#1d2726; --land:#2b2620; --coast:#7a6a55; --urban:#3a2f28; --river:#4f7283; --region:#4a4136; --border:#86725c; --road:#8a5a43; --rail:#6b6257; --label:#d8cdb8; --grat:#5d5244;
+  --grain:.12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1b1814; --sheet:#23201b; --ink:#ebe3d3; --muted:#a89d8b; --line:#3b352d; --grid:#2e2923;
+  --accent:#d9917a; --accent-soft:#33261f; --green:#93c39a; --green-bright:#93c39a; --pin-home:#ebe3d3; --ok:#93c39a;
+  --sea:#1d2726; --land:#2b2620; --coast:#7a6a55; --urban:#3a2f28; --river:#4f7283; --region:#4a4136; --border:#86725c; --road:#8a5a43; --rail:#6b6257; --label:#d8cdb8; --grat:#5d5244;
+  --grain:.12; color-scheme:dark}
+
+body{font-size:16px;line-height:1.6;font-family:var(--f-body)}
+.wrap{max-width:1080px;gap:28px}
+
+/* титул */
+header.mast{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding-block:6px 4px}
+.mast-top{width:100%;display:flex;justify-content:space-between;gap:12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--ink);padding-bottom:8px}
+.mast-top span:last-child{text-align:right}
+header.mast h1{font-weight:400;font-size:clamp(34px,7vw,64px);line-height:1.02;letter-spacing:.01em;margin:18px 0 0}
+.mast-rule{width:56px;height:1px;background:var(--ink);margin:8px 0}
+header.mast .sub{font-style:italic;color:var(--muted);margin:0;max-width:46ch}
+header.mast .stats{justify-content:center;gap:0;margin-top:6px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-block:8px}
+header.mast .stat{align-items:center;padding-inline:clamp(14px,4vw,34px)}
+header.mast .stat+.stat{border-left:1px solid var(--line)}
+.stat b{font-weight:700;font-size:24px;color:var(--ink)}
+.stat small{font-size:10.5px;letter-spacing:.16em;color:var(--muted)}
+
+/* кнопки и переключатели: печатные, без «таблеток» */
+button,.btn{font-family:var(--f-body);font-weight:700;border-radius:2px;border-width:1px;letter-spacing:.02em}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--sheet)}
+.seg{border-radius:2px;border-color:var(--ink)}
+.seg button{font-weight:400;font-style:italic;padding:6px 14px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);font-style:normal;font-weight:700}
+.chip{border-radius:2px;font-style:italic;font-weight:400}
+.chip[aria-current="true"]{font-style:normal;font-weight:700;background:transparent;border-color:var(--accent);color:var(--accent)}
+
+/* лист атласа */
+.mapcard{border-radius:2px;border-color:var(--ink);box-shadow:0 1px 0 var(--line),0 10px 30px -18px rgba(40,30,15,.45)}
+.maptools{border-color:var(--line)}
+.coords{font-style:italic;font-size:12px}
+.mapbox::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;opacity:var(--grain);mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .36  0 0 0 0 .22  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.mapbox{isolation:isolate}
+.mapbox .hint{z-index:1002}
+.leaflet-container{font-family:var(--f-body)}
+.city span{font-family:var(--f-body);font-style:italic;font-weight:400;font-size:12px}
+.city.big span{font-style:normal;font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.city i{width:5px;height:5px;border-radius:0;transform:rotate(45deg);background:var(--label)}
+.home-pin span{font-family:var(--f-body);font-weight:700;letter-spacing:.02em}
+.tp-img{border-color:var(--ink);background:var(--ink)}
+.tp::after{border-top-color:var(--ink)}
+.tp b{background:var(--green);border-color:var(--sheet);font-family:var(--f-body)}
+.tp-name{font-family:var(--f-body);border-radius:2px;border:1px solid var(--ink);box-shadow:none;letter-spacing:.01em}
+.trip-pin.sel .tp-img{border-color:var(--green)}
+.trip-pin.sel .tp::after{border-top-color:var(--green)}
+.spot i{border-radius:50%;background:var(--accent)}
+.spot span{font-family:var(--f-body)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{border-radius:2px;border:1px solid var(--ink)}
+.pop h5{font-family:var(--f-body);font-weight:700;font-size:16px;color:var(--ink)}
+.pop .pm{font-style:italic}
+.pop .pth img{border-radius:0}
+
+/* журнальный разворот поездки */
+.trip{border-radius:2px;border-color:var(--ink);padding:clamp(18px,4vw,44px);gap:34px}
+.trip-head{flex-direction:column;align-items:center;text-align:center;gap:14px;border-bottom:1px solid var(--ink);padding-bottom:22px}
+.trip-head>div:first-child{display:flex;flex-direction:column;align-items:center}
+.trip h2{font-weight:400;font-size:clamp(32px,6vw,54px);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);margin:10px 0 4px}
+.stamp{border:3px double var(--accent);border-radius:2px;font-family:var(--f-body);font-size:11px;letter-spacing:.12em;padding:5px 12px;transform:rotate(-2deg)}
+.meta{font-style:italic}
+.chapter{gap:14px}
+.chapter h3{justify-content:center;align-items:center;font-weight:400;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink);gap:14px}
+.chapter h3::before,.chapter h3::after{content:"";flex:1;height:1px;background:var(--line)}
+.chapter h3 small{font-style:italic;letter-spacing:.04em;text-transform:none;font-size:12px}
+.grid{gap:14px}
+.ph{border-radius:0}
+figcaption{font-style:italic;font-size:13.5px}
+.capt-short{font-style:normal;font-weight:700;font-size:14px;color:var(--ink)}
+.more summary{color:var(--accent);font-style:italic;font-weight:400;font-size:12.5px}
+.more-body{font-style:normal}
+.edit{font-style:normal}
+
+/* «Лицейские истории» — колонка журнала */
+.facts{background:transparent;border-radius:0;border-top:3px double var(--ink);border-bottom:1px solid var(--ink);padding:18px 0 14px;gap:16px}
+.facts h4{text-align:center;font-weight:400;font-style:italic;font-size:22px;color:var(--ink)}
+.factgrid{gap:18px 34px}
+.fact b{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.fact p{font-size:15px;line-height:1.6;text-align:left;hyphens:auto;text-wrap:pretty;white-space:pre-line;max-width:62ch}
+.fact q{font-style:italic;font-weight:400}
+.more-facts{border-top:1px solid var(--line)}
+.more-facts>summary{font-weight:400;font-style:italic;font-size:15px;text-align:center}
+.facts small{text-align:center;font-style:italic}
+.facts small a{color:var(--accent)}
+/* Загадки: карточка-вопрос, по нажатию открывается ответ */
+.riddles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;align-items:start}
+.rd{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:12px;width:100%;min-height:168px;padding:16px 18px;text-align:left;
+  font:inherit;font-weight:400;letter-spacing:0;color:var(--ink);background:var(--sheet);border:1px solid var(--ink);border-radius:2px;cursor:pointer;
+  transition:background .2s,color .2s}
+.rd:hover{background:var(--paper)}
+.rd>*{text-align:left;align-self:stretch}
+.rd-n{font-size:11px;letter-spacing:.16em;color:var(--muted)}
+.rd-q{font-size:17px;line-height:1.4;text-wrap:pretty;flex:1}
+.rd-tap{font-style:italic;font-size:13px;color:var(--accent);margin-top:auto}
+.rd-a{display:none}
+.rd[aria-expanded="true"]{background:var(--ink);color:var(--sheet);grid-column:span 2}
+.rd[aria-expanded="true"] .rd-n{color:color-mix(in srgb,var(--sheet) 65%,transparent)}
+.rd[aria-expanded="true"] .rd-q{flex:none;font-size:14px;font-style:italic;color:color-mix(in srgb,var(--sheet) 75%,transparent)}
+.rd[aria-expanded="true"] .rd-a{display:block;animation:rdIn .25s ease}
+.rd[aria-expanded="true"] .rd-tap{color:color-mix(in srgb,var(--accent) 45%,var(--sheet))}
+.rd-a b{display:block;font-size:20px;line-height:1.3;margin-bottom:6px}
+.rd-a span{display:block;font-size:15px;line-height:1.6;white-space:pre-line;text-wrap:pretty;hyphens:auto;max-width:62ch}
+.rd-a q{font-style:italic}
+@keyframes rdIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.facts .rd-hint{text-align:center;font-style:italic;color:var(--muted);margin:-8px 0 2px;font-size:14px}
+@media (max-width:560px){.riddles{grid-template-columns:1fr}.rd[aria-expanded="true"]{grid-column:auto}.rd{min-height:0}}
+@media (prefers-reduced-motion:reduce){.rd[aria-expanded="true"] .rd-a{animation:none}}
+@media print{.rd{break-inside:avoid;background:#fff!important;color:#111!important;min-height:0}.rd .rd-a{display:block!important}.rd-tap{display:none}.rd-a b,.rd-a span{color:#111!important}}
+
+
+/* эпиграф — как цитата внизу журнальной полосы */
+.epi{max-width:40rem;border-top:1px solid var(--ink);padding-top:22px}
+.epi blockquote{font-style:italic;font-weight:400;color:var(--ink);font-size:clamp(20px,3.6vw,27px)}
+.epi figcaption{font-style:normal;letter-spacing:.14em}
+
+/* впечатления — страница из тетради */
+.note{background:transparent;border:1px solid var(--line);border-radius:0;padding:14px 18px}
+.note label{letter-spacing:.16em;font-weight:400}
+.note textarea{font-family:var(--f-body);font-size:17px;line-height:32px;min-height:192px;font-style:italic;
+  background-image:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px)!important;background-attachment:local}
+.note textarea:focus{background-color:transparent;padding:4px 0}
+
+/* диалоги и лайтбокс */
+dialog{border-radius:2px;border:1px solid var(--ink)}
+.dlg h3{font-family:var(--f-body);font-weight:700}
+textarea,input,select{border-radius:2px;font-family:var(--f-body)}
+.toast{border-radius:2px;font-family:var(--f-body)}
+/* фото по три в ряд, как на журнальной полосе */
+.grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:520px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mast-top{font-size:10px;letter-spacing:.1em}
+  .mast-top span:last-child{display:none}
+  .mast-top{justify-content:center}
+}
+/* «Все поездки»: группы по годам / странам */
+.maptools.tl{flex-direction:column;align-items:stretch;gap:12px;padding:14px 16px}
+.tl-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.tl-title{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.tgroups{display:flex;flex-direction:column}
+.tgroup{display:grid;grid-template-columns:minmax(120px,170px) 1fr;gap:6px 16px;align-items:baseline;padding-block:8px;border-top:1px dotted var(--line)}
+.tgroup:first-child{border-top:0}
+.tg-name{border:0;padding:0;background:transparent;color:var(--ink);font-size:17px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;gap:0;text-align:left;cursor:pointer}
+.tg-name small{font-size:12px;font-weight:400;font-style:italic;color:var(--muted);letter-spacing:0}
+.tg-name:hover{color:var(--accent)}
+.tg-list{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.chip-y{font-style:italic;font-weight:400;color:var(--muted)}
+.maptools.tl .coords{align-self:flex-end}
+@media (max-width:520px){.tgroup{grid-template-columns:1fr}.tg-name{flex-direction:row;align-items:baseline;gap:8px}}
+
+
+/* викторина «Узнай место по фотографии» */
+#quizDlg{width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto}
+.qz{padding:clamp(16px,3vw,28px);display:flex;flex-direction:column;gap:14px}
+.qz-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:3px double var(--ink);padding-bottom:10px}
+.qz-kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.qz-head h3{margin:2px 0 0;font-size:clamp(20px,3.5vw,28px);font-weight:400}
+.qz-x{padding:4px 10px}
+.qz-progress{display:flex;justify-content:space-between;gap:10px;font-style:italic;color:var(--muted);font-size:14px}
+.qz-progress b{color:var(--ink);font-style:normal;font-variant-numeric:tabular-nums}
+.qz-bar{height:3px;background:var(--line)}
+.qz-bar i{display:block;height:100%;background:var(--green);transition:width .3s}
+.qz-ph{margin:0;background:var(--grid);border:1px solid var(--line)}
+.qz-ph img{display:block;width:100%;max-height:50vh;object-fit:contain;background:var(--grid)}
+.qz-q{margin:0;text-align:center;font-style:italic;font-size:18px}
+.qz-opts{display:grid;gap:8px}
+.qz-opt{justify-content:flex-start;text-align:left;font-weight:400;font-size:16px;padding:10px 14px;border-color:var(--line);background:var(--sheet);gap:12px;width:100%}
+.qz-opt:hover:not(:disabled){border-color:var(--ink)}
+.qz-opt:disabled{cursor:default;opacity:1}
+.qz-k{font-size:12px;color:var(--muted);min-width:1.2em;font-variant-numeric:tabular-nums}
+.qz-opt.ok{border:2px solid var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--sheet));font-weight:700}
+.qz-opt.bad{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--sheet));text-decoration:line-through}
+.qz-opt.dim:disabled{opacity:.5}
+.qz-mark{margin-left:auto;font-weight:700;text-decoration:none;display:inline-block}
+.qz-expl{border-left:3px solid var(--ok);padding:2px 0 2px 14px}
+.qz-expl.bad{border-left-color:var(--accent)}
+.qz-expl p{margin:6px 0 0;font-size:14px;line-height:1.55;color:var(--muted)}
+.qz-expl .qz-short{color:var(--ink);font-weight:700;font-size:15px}
+.qz-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.qz-result{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.qz-score{font-size:64px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.qz-score small{display:block;font-size:14px;font-weight:400;font-style:italic;color:var(--muted);letter-spacing:.06em;margin-top:6px}
+.qz-verdict{font-size:19px;font-style:italic;margin:0;max-width:34ch}
+.qz-best{margin:0;color:var(--green);font-weight:700}
+.qz-review{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;width:100%;margin-top:4px}
+.qz-review figure{margin:0;border:2px solid var(--ok);gap:0}
+.qz-review figure.bad{border-color:var(--accent)}
+.qz-review img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.qz-review figcaption{font-size:11.5px;padding:3px 5px;text-align:left;justify-content:flex-start;font-style:normal;color:var(--ink)}
+.qz-actions.center{justify-content:center}
+.qz-empty{font-style:italic;color:var(--muted)}
+@media (max-width:520px){.qz-ph img{max-height:38vh}.qz-opt{font-size:15px}}
+/* Каталог и быстрый поиск */
+.trip-filters{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.searchbox{display:flex;align-items:center;gap:8px;flex:1 1 280px;max-width:520px;border:1px solid var(--line);background:var(--sheet);padding:0 10px;min-height:40px;color:var(--muted)}
+.searchbox>span{font-size:24px;line-height:1}
+.searchbox input{border:0!important;background:transparent!important;outline:none!important;box-shadow:none!important;padding:8px 0;min-width:0}
+.searchbox button{border:0;background:transparent;color:var(--muted);font-size:22px;padding:0 2px}
+.searchbox:focus-within{border-color:var(--accent);outline:1px solid var(--accent)}
+.view-switch{flex-shrink:0}
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding-top:8px}
+.catalog-card{display:flex;flex-direction:column;text-align:left;padding:0;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:2px;overflow:hidden;min-width:0;transition:border-color .15s,transform .15s}
+.catalog-card:hover,.catalog-card:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
+.catalog-cover{aspect-ratio:16/10;background:var(--grid);overflow:hidden;display:block}
+.catalog-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.catalog-placeholder{height:100%;display:grid;place-items:center;color:var(--muted);font-size:28px}
+.catalog-copy{display:flex;flex-direction:column;gap:5px;padding:12px}
+.catalog-title{font-size:19px;line-height:1.25;font-weight:700}
+.catalog-meta{font-size:12px;color:var(--muted);font-style:italic}
+.catalog-summary{font-size:13px;line-height:1.45;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.catalog-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.catalog-tag{font-size:11px;border:1px solid var(--line);padding:2px 6px;color:var(--muted)}
+.catalog-mode .mapbox,.catalog-mode>.maptools:not(.tl) .seg{display:none}
+.catalog-mode .group-switch,.catalog-mode .coords{display:none}
+.catalog-mode .tgroups{display:block}
+.catalog-mode .tgroup{display:none}
+.catalog-mode .catalog-grid{display:grid}
+.catalog-mode .tl-head{border-bottom:1px solid var(--line);padding-bottom:10px}
+@media(max-width:520px){
+ .trip-filters{align-items:stretch}
+ .searchbox{max-width:none;flex-basis:100%}
+ .catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .catalog-copy{padding:9px}
+ .catalog-title{font-size:16px}
+ .catalog-summary{font-size:12px}
+ .catalog-mode .maptools.tl{padding:12px}
+}
+
+
+/* Режим «Книга»: последовательное чтение поездки как главы путевого дневника */
+#tripView.book-mode{background:var(--sheet);border-color:var(--muted);padding:clamp(16px,4vw,48px);gap:0;color:var(--ink)}
+.book-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.book-toolbar .book-label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.book-cover{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:clamp(280px,48vw,520px);padding:clamp(22px,5vw,58px);margin:20px 0 30px;overflow:hidden;background:var(--grid);color:#fff;isolation:isolate}
+.book-cover::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,18,15,.05),rgba(20,18,15,.76));z-index:-1}
+.book-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;filter:sepia(.16)}
+.book-cover .book-kicker{font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px}
+.book-cover h2{font-family:var(--f-display);font-size:clamp(34px,7vw,66px);line-height:1.02;font-weight:400;letter-spacing:0;text-transform:none;color:#fff;margin:0;max-width:14ch}
+.book-cover .book-subtitle{font-size:15px;font-style:italic;max-width:42ch;margin-top:14px;color:#fff}
+.book-cover .book-date{font-size:12px;letter-spacing:.12em;margin-top:26px}
+.book-intro{max-width:68ch;margin:0 auto 38px;font-size:clamp(17px,2.2vw,20px);line-height:1.8;text-align:left}
+.book-toc{max-width:760px;margin:0 auto 42px;padding:22px clamp(16px,4vw,34px);border-top:3px double var(--muted);border-bottom:1px solid var(--muted)}
+.book-toc h3{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:400;text-align:center;margin:0 0 16px}
+.book-toc ol{list-style:none;counter-reset:bookchap;padding:0;margin:0}
+.book-toc li{counter-increment:bookchap;border-top:1px dotted var(--line)}
+.book-toc li:first-child{border-top:0}
+.book-toc a{display:flex;gap:12px;align-items:baseline;padding:10px 0;color:inherit;text-decoration:none}
+.book-toc a::before{content:counter(bookchap,decimal-leading-zero);font-size:11px;color:var(--accent);letter-spacing:.08em}
+.book-toc a:hover{color:var(--accent)}
+.book-chapter{padding:clamp(24px,5vw,54px) 0;border-top:1px solid var(--line);scroll-margin-top:18px}
+.book-chapter h3{font-family:var(--f-display);font-weight:400;font-size:clamp(27px,4.5vw,42px);line-height:1.12;text-align:center;letter-spacing:0;text-transform:none;color:var(--ink);margin:0 auto 24px;max-width:20ch}
+.book-chapter h3::before,.book-chapter h3::after{display:none}
+.book-chapter .book-chapter-no{text-align:center;color:var(--accent);font-size:10px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:9px}
+.book-chapter .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:920px;margin:0 auto}
+.book-chapter figure:first-child:nth-last-child(odd){grid-column:1/-1;max-width:78%;justify-self:center}
+.book-chapter .ph{width:100%;background:transparent}
+.book-chapter .ph img{display:block;width:100%;height:auto;max-height:75vh;object-fit:contain}
+/* фото в книге — по своим пропорциям, без пустых полей вокруг */
+.book-chapter .grid{align-items:start;grid-auto-flow:row dense}
+.book-chapter figure.wide{grid-column:1/-1}
+.book-chapter figure.solo{grid-column:1/-1;justify-self:center;width:calc(50% - 9px)}
+@media(max-width:600px){.book-chapter figure.wide,.book-chapter figure.solo{grid-column:auto;width:auto}}
+.book-chapter .ph{aspect-ratio:auto;height:auto;overflow:visible}
+.book-chapter .ph img{width:auto;max-width:100%;max-height:min(75vh,760px);margin:0 auto}
+.book-chapter figure:first-child:nth-last-child(odd){width:fit-content;max-width:78%}
+.book-chapter figure:first-child:nth-last-child(odd) figcaption{max-width:100%}
+.book-chapter figcaption{padding:7px 2px 0;line-height:1.55;color:var(--muted)}
+.book-chapter .capt-short{font-size:15px;color:var(--ink)}
+.book-chapter .facts{max-width:760px;margin:30px auto;background:transparent;border-color:var(--muted)}
+.book-chapter .facts h4{font-size:24px}
+.book-chapter .fact p{text-align:left}
+.book-facts-end{padding:26px 0;border-top:1px solid var(--line)}
+.book-endnote{max-width:700px;margin:20px auto 0;padding:24px;border:1px solid var(--line);background:transparent}
+.book-endnote h3{font-family:var(--f-display);font-size:26px;font-weight:400;text-align:center;margin:0 0 12px}
+.book-endnote .note{border:0;padding:8px 0}
+.book-endnote .note textarea{min-height:130px}
+.book-backtop{display:block;text-align:center;margin:24px auto 0;color:var(--muted);font-size:12px;text-decoration:none}
+@media(max-width:600px){
+ #tripView.book-mode{padding:14px}
+ .book-cover{min-height:340px}
+ .book-chapter .grid{grid-template-columns:1fr;gap:20px}
+ .book-chapter figure:first-child:nth-last-child(odd){grid-column:auto;max-width:none}
+ .book-toc{padding:18px 12px}
+}
+
+
+@media print{
+  @page{size:auto;margin:14mm}
+  body{background:#fff!important;color:#111!important;font-size:11pt}
+  .wrap{max-width:none;width:100%;padding:0;margin:0;gap:0}
+  header.mast,.mapcard,dialog,#fileIn,.trip-head .row,.edit,.prog{display:none!important}
+  .trip{display:flex!important;border:0!important;padding:0!important;margin:0!important;box-shadow:none!important;gap:20px!important;background:#fff!important;color:#111!important}
+  #tripView.book-mode{background:#fff!important;color:#111!important;padding:0!important;gap:0!important}
+  .book-toolbar,.book-backtop{display:none!important}
+  .book-cover{min-height:230mm!important;break-after:page;page-break-after:always;color:#111!important;background:#fff!important;border:1px solid #aaa!important}
+  .book-cover::before{display:none!important}
+  .book-cover img{opacity:.25!important}
+  .book-cover h2{color:#111!important}
+  .book-intro{break-after:page;page-break-after:always}
+  .book-toc{break-after:page;page-break-after:always}
+  .book-chapter{break-before:page;page-break-before:always}
+  .book-chapter .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .trip-head{display:flex!important;align-items:center!important;border-bottom:1px solid #777!important;padding-bottom:12px!important}
+  .trip h2{font-size:28pt!important;color:#111!important}
+  .chapter{break-inside:auto;gap:8px!important}
+  .chapter h3{color:#111!important}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+  figure{break-inside:avoid;page-break-inside:avoid}
+  .ph{aspect-ratio:auto!important;height:auto!important;background:#fff!important}
+  .ph img{width:100%!important;height:auto!important;max-height:170mm!important;object-fit:contain!important}
+  .facts{break-inside:avoid;border-color:#777!important}
+  .epi{break-inside:avoid}
+  .note{border:1px solid #bbb!important}
+  .note textarea{min-height:90px!important;background:none!important;border:0!important;color:#111!important}
+  .note-text,.fact p,.capt,.meta,.coords,.facts small{color:#222!important}
+  .more[open] .more-body{display:block}
+  a{color:#111!important;text-decoration:none}
+}
+
+
+.site-foot{border-top:1px solid var(--ink);padding-top:12px;text-align:center;font-size:12.5px;font-style:italic;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.site-foot p{margin:0}
+@media print{.site-foot{display:none}}
+.stat small.far-l{max-width:30ch;text-align:center;line-height:1.35}
+@media (max-width:520px){header.mast .stat:has(.far-l){flex-basis:100%;border-left:0!important;margin-top:6px}}
+.leaflet-streets-pane img{filter:sepia(.55) saturate(.75) contrast(.95) brightness(1.02)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .leaflet-streets-pane img{filter:invert(1) hue-rotate(180deg) sepia(.35) brightness(.85) contrast(.9)}}
+:root[data-theme="dark"] .leaflet-streets-pane img{filter:invert(1) hue-rotate(180deg) sepia(.35) brightness(.85) contrast(.9)}
+#map.streets .city{display:none}
+.note-text{white-space:pre-wrap;font-style:italic;font-size:17px;line-height:32px;background-image:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px)}
+
+/* ===== Обложка, штемпели, почерк, вклеенные фото ===== */
+:root{--nb-paper:#fbf8f1;--nb-ink:#2c3e78;--nb-rule:#c9c2ea;--nb-margin:#e3a49a;--frame:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--nb-paper:#26231e;--nb-ink:#b9c6f0;--nb-rule:#3f3c55;--nb-margin:#6b3a33;--frame:#3a352d}}
+:root[data-theme="dark"]{--nb-paper:#26231e;--nb-ink:#b9c6f0;--nb-rule:#3f3c55;--nb-margin:#6b3a33;--frame:#3a352d}
+.cover{position:relative;margin:calc(-1*clamp(18px,4vw,44px)) calc(-1*clamp(18px,4vw,44px)) 0;height:clamp(280px,44vw,460px);color:#fff;isolation:isolate}
+.cover-img{position:absolute;inset:0;overflow:hidden;background:var(--grid)}
+.cover-img img{width:100%;height:100%;object-fit:cover;object-position:50% 38%;display:block;filter:sepia(.12) saturate(1.05)}
+.cover-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,16,10,0) 35%,rgba(20,16,10,.72))}
+.cover-txt{position:absolute;left:clamp(18px,4vw,44px);right:180px;bottom:clamp(20px,4vw,40px);z-index:1}
+.cover-k{font-size:11px;letter-spacing:.22em;text-transform:uppercase;opacity:.92}
+.trip .cover-txt h2{margin:6px 0 4px;color:#fff;font-size:clamp(34px,6vw,58px);letter-spacing:.04em;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.cover-m{font-style:italic;font-size:15px;opacity:.92}
+.cover .pmark{position:absolute;right:clamp(14px,3vw,34px);bottom:-46px;z-index:2;width:132px;height:132px;transform:rotate(-9deg)}
+.trip-head.slim{border-bottom:0;padding-bottom:0;align-items:flex-start;text-align:left;margin-top:-8px;padding-right:150px}
+.trip-head.slim>div:first-child{display:none}
+.pmark{display:block;flex:none;padding:0;border:0;border-radius:50%;background:var(--sheet);box-shadow:0 4px 14px -6px rgba(40,30,15,.45);opacity:.94}
+.pmark svg{display:block;width:100%;height:100%}
+.pm-ink{fill:none;stroke:var(--accent);stroke-width:2}
+.pm-t{fill:var(--accent);font-family:var(--f-body);font-weight:700}
+.pm-d{fill:var(--accent);font-family:var(--f-body);font-weight:700;font-size:17px}
+.pm-m{fill:var(--accent);font-family:var(--f-body);font-weight:700;font-size:11px;letter-spacing:.6px}
+.passport{display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px;justify-content:center;margin-top:4px}
+.passport:empty{display:none}
+.passport .lbl{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.passport .pmark{width:66px;height:66px;cursor:pointer;transform:rotate(-8deg);transition:transform .2s}
+.passport .pmark:nth-of-type(even){transform:rotate(6deg)}
+.passport .pmark:hover,.passport .pmark:focus-visible{transform:rotate(0) scale(1.08)}
+.passport .empty-st{width:60px;height:60px;border:1.5px dashed var(--line);border-radius:50%;display:grid;place-items:center;color:var(--muted);font-style:italic;font-size:11px;text-align:center;line-height:1.15}
+.note{position:relative;background:var(--nb-paper)!important;box-shadow:0 1px 0 var(--line),0 10px 22px -16px rgba(40,30,15,.4)}
+.note-text,.note textarea{font-family:"Caveat",cursive!important;font-style:normal!important;font-size:27px!important;line-height:36px!important;color:var(--nb-ink)!important;
+  background-image:repeating-linear-gradient(transparent 0 35px,var(--nb-rule) 35px 36px)!important;background-color:transparent!important;padding-left:46px!important;
+  box-shadow:inset 34px 0 0 -33px var(--nb-margin)}
+.note textarea{min-height:216px}
+.trip:not(.book-mode) .ph{background:var(--frame);padding:7px;box-shadow:0 1px 2px rgba(40,30,15,.15),0 8px 16px -10px rgba(40,30,15,.45)}
+.trip:not(.book-mode) .ph:hover{transform:none}
+.trip:not(.book-mode) .ph:hover img{transform:none}
+.chapter h3::before{background:linear-gradient(90deg,transparent,var(--line))}
+.chapter h3::after{background:linear-gradient(90deg,var(--line),transparent)}
+.chapter h3 .fl{color:var(--accent);font-size:15px;letter-spacing:0}
+@media (max-width:560px){.cover{height:340px}.cover-txt{right:18px;bottom:64px}.trip .cover-txt h2{font-size:34px}.cover .pmark{width:92px;height:92px;bottom:-34px}.cover-k{font-size:10px;letter-spacing:.14em}.trip-head.slim{padding-right:96px}}
+@media (prefers-reduced-motion:reduce){.trip .ph:hover{transform:none}}
+@media print{.cover{margin:0 0 10px;height:300px}.pmark{box-shadow:none}.passport{display:none}.trip .ph{box-shadow:none!important;padding:0!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="mast-top"><span>Альбом школьных поездок</span><span>Начат в октябре 2026</span></div>
+    <h1>Моя карта путешествий</h1>
+    <div class="mast-rule" aria-hidden="true"></div>
+    <p class="sub">Каждая поездка — точка на карте. Нажми на точку, чтобы открыть фото и впечатления.</p>
+    <div class="stats" aria-label="Итоги">
+      <div class="stat"><b id="sTrips">0</b><small id="lTrips">поездок</small></div>
+      <div class="stat"><b id="sCountries">0</b><small id="lCountries">стран</small></div>
+      <div class="stat"><b id="sPhotos">0</b><small>фото</small></div>
+      <div class="stat"><b id="sFar">—</b><small class="far-l">км, от Москвы до самой дальней поездки</small></div>
+    </div>
+    <div class="passport" id="passport" aria-label="Штемпели поездок"></div>
+  </header>
+
+  <section class="mapcard" id="mapcard" aria-label="Карта и каталог поездок">
+    <div class="maptools">
+      <div class="seg" role="group" aria-label="Масштаб">
+        <button id="zMine" aria-pressed="true">Мои поездки</button>
+        <button id="zWorld" aria-pressed="false">Весь мир</button>
+      </div>
+      <div class="row">
+        <span class="ro" id="roNote" hidden>Только просмотр</span>
+        <button class="ghost" id="quizBtn">Викторина</button>
+        <button class="primary" id="addBtn" hidden>+ Новая поездка</button>
+      </div>
+    </div>
+    <div class="mapbox">
+      <div id="map" role="region" aria-label="Карта с поездками"></div>
+      <div class="hint" id="pickHint" hidden>Нажми на карту там, где была поездка. <button class="ghost" id="pickCancel" style="color:inherit;border-color:currentColor;padding:2px 10px;margin-left:6px">Отмена</button></div>
+    </div>
+    <div class="maptools tl" style="border-bottom:0;border-top:1px solid var(--line)">
+      <div class="tl-head"><span class="tl-title">Все поездки</span>
+        <div class="seg view-switch" role="group" aria-label="Вид поездок"><button id="vMap" aria-pressed="true">Карта</button><button id="vCatalog" aria-pressed="false">Каталог</button></div>
+      </div>
+      <div class="trip-filters">
+        <label class="searchbox" for="tripSearch"><span aria-hidden="true">⌕</span><input id="tripSearch" type="search" placeholder="Найти поездку, место, главу или факт…" autocomplete="off"><button type="button" id="clearSearch" aria-label="Очистить поиск" hidden>×</button></label>
+        <div class="seg group-switch" role="group" aria-label="Группировать поездки"><button id="gYear" aria-pressed="true">По годам</button><button id="gCountry" aria-pressed="false">По странам</button></div>
+      </div>
+      <div id="tripChips" class="tgroups"></div>
+      <span class="coords" id="tripCountNote"></span>
+    </div>
+  </section>
+
+  <section id="tripView" class="trip" aria-live="polite">
+    <div class="empty" id="loading">Загружаю поездки…</div>
+  </section>
+  <footer class="site-foot">
+    <p>© 2026 Черная Анастасия и Черная Ирина. Фотографии — Черная Ирина; использование без разрешения не допускается. Подписи и истории подготовлены с помощью ИИ (Claude).</p>
+    <p>Карта: Natural Earth; улицы — © участники OpenStreetMap. Цитаты А. С. Пушкина — общественное достояние.</p>
+  </footer>
+</div>
+
+<dialog id="tripDlg"><form class="dlg" id="tripForm" method="dialog">
+  <h3 id="tripDlgTitle">Новая поездка</h3>
+  <div class="field"><label for="fTitle">Название</label><input id="fTitle" required maxlength="80" placeholder="Например: Казань с классом"></div>
+  <div class="field"><label for="fCity">Где это</label>
+    <select id="fCity"></select>
+  </div>
+  <div class="field"><label for="fCountry">Страна</label><input id="fCountry" list="countryList" maxlength="60" placeholder="Россия"><datalist id="countryList"></datalist></div>
+  <div class="field"><label for="fPlace">Подпись места</label><input id="fPlace" maxlength="60" placeholder="г. Пушкин"></div>
+  <div class="two">
+    <div class="field"><label for="fDate">Первый день</label><input id="fDate" type="date"></div>
+    <div class="field"><label for="fDateTo">Последний день (если больше одного)</label><input id="fDateTo" type="date"></div>
+  </div>
+  <div class="field"><label>Точка на карте</label>
+    <div class="row"><span class="coords" id="fCoords">не выбрана</span><button type="button" class="ghost" id="fPick">Указать на карте</button></div>
+  </div>
+  <div class="field"><label for="fChapters">Главы альбома (через запятую)</label><input id="fChapters" maxlength="300" placeholder="Музей, Парк, Дорога"></div>
+  <p class="err" id="fErr"></p>
+  <div class="row" style="justify-content:space-between">
+    <button type="button" class="ghost" id="fDelete" hidden>Удалить поездку</button>
+    <div class="row" style="margin-left:auto"><button type="button" class="ghost" id="fCancel">Отмена</button><button type="submit" class="primary" id="fSave">Сохранить</button></div>
+  </div>
+  <div id="fConfirm" hidden class="field" style="background:var(--accent-soft);padding:10px;border-radius:8px">
+    <span>Удалить поездку вместе с подписями? Фото останутся в хранилище.</span>
+    <div class="row"><button type="button" class="primary" id="fDelYes">Да, удалить</button><button type="button" class="ghost" id="fDelNo">Нет</button></div>
+  </div>
+</form></dialog>
+
+<dialog id="photoDlg"><form class="dlg" id="photoForm" method="dialog">
+  <h3>Подпись к фото</h3>
+  <div class="field"><label for="pShort">Коротко — одна строка</label><input id="pShort" maxlength="120"></div>
+  <div class="field"><label for="pCaption">Подробнее (можно оставить пустым)</label><textarea id="pCaption" maxlength="400"></textarea></div>
+  <div class="field"><label for="pChapter">Глава</label><input id="pChapter" list="chapterList" maxlength="60"><datalist id="chapterList"></datalist></div>
+  <div class="row" style="justify-content:space-between">
+    <button type="button" class="ghost" id="pRemove">Убрать из альбома</button>
+    <div class="row"><button type="button" class="ghost" id="pCancel">Отмена</button><button type="submit" class="primary">Сохранить</button></div>
+  </div>
+</form></dialog>
+
+<dialog id="lb"><div class="lbin">
+  <img id="lbImg" alt="">
+  <div class="lbbar"><button id="lbPrev" aria-label="Предыдущее фото">←</button><p id="lbCap"></p><div class="row"><button id="lbNext" aria-label="Следующее фото">→</button><button id="lbClose" aria-label="Закрыть">✕</button></div></div>
+</div></dialog>
+
+<dialog id="quizDlg" aria-labelledby="qzTitle"><div class="qz">
+  <div class="qz-head"><div><span class="qz-kicker">Викторина</span><h3 id="qzTitle">Узнай место по фотографии</h3></div><button class="ghost qz-x" id="qzClose" aria-label="Закрыть викторину">✕</button></div>
+  <div id="qzBody" aria-live="polite"></div>
+</div></dialog>
+
+<input type="file" id="fileIn" accept="image/*" multiple hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+const HOME = {name:"Москва", lat:55.7558, lon:37.6173};
+const CITIES = [
+ ["Санкт-Петербург",59.9386,30.3141],["Пушкин (Царское Село)",59.7163,30.3958],["Петергоф",59.8803,29.9097],["Великий Новгород",58.5215,31.2755],
+ ["Псков",57.8136,28.3496],["Калининград",54.7104,20.4522],["Петрозаводск",61.7849,34.3469],["Мурманск",68.9707,33.0749],["Архангельск",64.5393,40.5187],
+ ["Тверь",56.8587,35.9176],["Ярославль",57.6261,39.8845],["Кострома",57.7677,40.9264],["Владимир",56.1291,40.4066],["Суздаль",56.4196,40.4497],
+ ["Сергиев Посад",56.3153,38.1359],["Ростов Великий",57.1855,39.4148],["Тула",54.1931,37.6177],["Калуга",54.5293,36.2754],["Рязань",54.6269,39.6916],
+ ["Смоленск",54.7826,32.0453],["Нижний Новгород",56.3269,44.0059],["Казань",55.7963,49.1088],["Самара",53.1959,50.1002],["Волгоград",48.708,44.5133],
+ ["Воронеж",51.6720,39.1843],["Ростов-на-Дону",47.2357,39.7015],["Краснодар",45.0355,38.9753],["Сочи",43.5855,39.7231],["Пермь",58.0105,56.2502],
+ ["Екатеринбург",56.8389,60.6057],["Вологда",59.2181,39.8886],["Великий Устюг",60.7593,46.3044],["Минск",53.9045,27.5615]
+];
+const LABEL_CITIES = new Set(["Санкт-Петербург","Великий Новгород","Псков","Калининград","Петрозаводск","Мурманск","Архангельск","Тверь","Ярославль","Владимир","Тула","Смоленск","Нижний Новгород","Казань","Самара","Волгоград","Воронеж","Ростов-на-Дону","Краснодар","Сочи","Пермь","Екатеринбург","Вологда","Минск"]);
+const NOTE_FIELDS = [["text",""]];
+
+let db=null, assets=null, trips=[], selectedId=null, zoom="mine", picking=false, pickTarget=null, lbList=[], lbIdx=0, editPhotoIdx=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3200)}
+function km(a,b){const R=6371,r=Math.PI/180,dLa=(b.lat-a.lat)*r,dLo=(b.lon-a.lon)*r;const h=Math.sin(dLa/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLo/2)**2;return Math.round(2*R*Math.asin(Math.sqrt(h)))}
+function fmtDate(d){if(!d)return"";const [y,m,dd]=d.split("-").map(Number);const mm=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];return `${dd} ${mm[m-1]} ${y}`}
+function fmtRange(t){
+  const a=t.date,b=t.dateTo; if(!a) return "";
+  if(!b||b===a) return fmtDate(a);
+  const [y1,m1,d1]=a.split("-").map(Number),[y2,m2,d2]=b.split("-").map(Number);
+  if(y1===y2&&m1===m2) return `${d1}–${fmtDate(b)}`;
+  if(y1===y2) return `${fmtDate(a).replace(" "+y1,"")} – ${fmtDate(b)}`;
+  return `${fmtDate(a)} – ${fmtDate(b)}`;
+}
+function fmtCoord(lat,lon){return `${Math.abs(lat).toFixed(2)}° ${lat>=0?"с.ш.":"ю.ш."}, ${Math.abs(lon).toFixed(2)}° ${lon>=0?"в.д.":"з.д."}`}
+function photoUrl(p){return p.src}
+
+/* ---------- карта: Leaflet + данные Natural Earth ---------- */
+let streets=null, streetsOff=false, map=null, base={}, baseRenderer=null, routeLayer=null, tripLayer=null, placeLayer=null, labelLayer=null, placesData=[], tripMarkers={}, tripRoutes={};
+const tok=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const BASE_ORDER=["wland","land","urban","wlakes","lakes","rivers","regions","wborders","rail","roads","grat"];
+const STYLE={
+  wland:()=>({color:tok("--coast"),weight:.8,fillColor:tok("--land"),fillOpacity:1}),
+  land:()=>({color:tok("--coast"),weight:.9,fillColor:tok("--land"),fillOpacity:1}),
+  wlakes:()=>({color:tok("--coast"),weight:.5,fillColor:tok("--sea"),fillOpacity:1}),
+  wborders:()=>({color:tok("--border"),weight:1.3,dashArray:"8 3 2 3",fill:false}),
+  urban:()=>({stroke:false,fillColor:tok("--urban"),fillOpacity:1}),
+  lakes:()=>({color:tok("--coast"),weight:.6,fillColor:tok("--sea"),fillOpacity:1}),
+  rivers:()=>({color:tok("--river"),weight:1.2,opacity:.95,fill:false}),
+  regions:()=>({color:tok("--region"),weight:1,dashArray:"4 4",fill:false}),
+  borders:()=>({color:tok("--border"),weight:1.6,dashArray:"8 3 2 3",fill:false}),
+  rail:()=>({color:tok("--rail"),weight:1,dashArray:"5 3",fill:false}),
+  roads:()=>({color:tok("--road"),weight:1.6,opacity:.95,fill:false}),
+  grat:()=>({color:tok("--grat"),weight:.6,opacity:.55,fill:false}),
+};
+// подробные слои (европейская часть России) включаются при приближении, мировые — всегда
+const MINZ={land:5,lakes:5,rivers:4,regions:5,roads:6,rail:7};
+const MAXZ={wlakes:5};
+const WORLD_BOUNDS=[[-56,-168],[78,190]];
+function fixMinZoom(){ if(!map) return; const z=map.getBoundsZoom(WORLD_BOUNDS,false); map.setMinZoom(Math.max(1,Math.floor(z*2)/2)); }
+
+function initMap(){
+  if(!window.L||!window.topojson){$("map").innerHTML=`<div class="empty">Карта не загрузилась. Обнови страницу.</div>`;return}
+  map=L.map("map",{minZoom:1,maxZoom:18,zoomSnap:.5,maxBounds:[[-80,-200],[85,220]],maxBoundsViscosity:1,attributionControl:true});
+  map.attributionControl.setPrefix(false).addAttribution("Картографические данные: Natural Earth");
+  map.createPane("base").style.zIndex=200;
+  map.createPane("labels").style.zIndex=450; map.getPane("labels").style.pointerEvents="none";
+  baseRenderer=L.canvas({pane:"base",padding:.5});
+  routeLayer=L.layerGroup().addTo(map); tripLayer=L.layerGroup().addTo(map);
+  placeLayer=L.layerGroup(); labelLayer=L.layerGroup().addTo(map);
+  fixMinZoom(); map.on("resize",fixMinZoom);
+  map.fitBounds([[52,27],[61,42]]);
+  map.on("click",e=>{ if(!picking) return; pickTarget={lat:+e.latlng.lat.toFixed(4),lon:+e.latlng.lng.toFixed(4)}; stopPick(true); });
+  map.on("zoomend moveend",updateZoomLayers);
+  map.on("popupopen",e=>{
+    const el=e.popup.getElement(); if(!el) return;
+    el.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{map.closePopup();$("tripView").scrollIntoView({behavior:"smooth",block:"start"})});
+    el.querySelectorAll("[data-chgo]").forEach(b=>b.onclick=()=>{selectedId=b.dataset.trip; try{localStorage.setItem("sel",selectedId)}catch(e){}; map.closePopup(); renderStats(); renderTrip(); refreshSel(); goChapter(b.dataset.chgo)});
+    el.querySelectorAll("[data-zoom]").forEach(b=>b.onclick=()=>{const t=trips.find(x=>x.id===b.dataset.zoom);if(t){map.closePopup();map.flyTo([t.lat,t.lon],(t.places&&t.places.length)?15:11,{duration:1.2})}});
+  });
+  fetch("basemap.json").then(r=>{if(!r.ok)throw 0;return r.json()}).then(topo=>{
+    for(const k of BASE_ORDER){ if(!topo.objects[k]) continue;
+      base[k]=L.geoJSON(topojson.feature(topo,topo.objects[k]),{style:STYLE[k],interactive:false,renderer:baseRenderer,pane:"base"}); }
+    const gl=[]; for(let lo=-180;lo<=180;lo+=10){const l=[];for(let la=-80;la<=80;la+=2)l.push([la,lo]);gl.push(l)} for(let la=-80;la<=80;la+=10){const l=[];for(let lo=-180;lo<=180;lo+=2)l.push([la,lo]);gl.push(l)}
+    base.grat=L.polyline(gl,{...STYLE.grat(),interactive:false,renderer:baseRenderer,pane:"base"});
+    const pl=k=>topo.objects[k]?topojson.feature(topo,topo.objects[k]).features:[];
+    placesData=[...pl("places"),...pl("wplaces")].map(f=>({n:f.properties.n,p:f.properties.p||0,r:f.properties.r||9,lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0]}));
+    placesData.push({n:"Пушкин",p:100000,r:7.5,lat:59.7163,lon:30.3958});
+    placesData.sort((a,b)=>b.p-a.p);
+    updateZoomLayers();
+  }).catch(()=>toast("Не удалось загрузить подложку карты"));
+  map.createPane("streets").style.zIndex=250;
+  streets=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{pane:"streets",maxZoom:19,attribution:'&copy; участники <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'});
+  { let ok=0,bad=0; streets.on("tileload",()=>ok++); streets.on("tileerror",()=>{ if(++bad>=6&&!ok){ streetsOff=true; map.removeLayer(streets); $("map").classList.remove("streets"); } }); }
+  const mo=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)"); if(mo&&mo.addEventListener) mo.addEventListener("change",restyle);
+  new MutationObserver(restyle).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+  drawMap(); fitMine();
+}
+function restyle(){ for(const k in base) base[k].setStyle(k==="grat"?STYLE.grat():STYLE[k]); drawMap(); }
+function updateZoomLayers(){
+  if(!map) return; const z=map.getZoom();
+  for(const k of BASE_ORDER){ const L_=base[k]; if(!L_) continue; const need=z>=(MINZ[k]||0)&&z<(MAXZ[k]||99), has=map.hasLayer(L_);
+    if(need&&!has) L_.addTo(map); else if(!need&&has) map.removeLayer(L_); }
+  for(const k of BASE_ORDER){ if(base[k]&&map.hasLayer(base[k])) base[k].bringToFront(); }
+  // подписи городов: крупные раньше, мелкие при приближении; без наложений
+  labelLayer.clearLayers(); const b=map.getBounds().pad(.05), taken=[];
+  for(const p of placesData){
+    if(p.r>z+1||!b.contains([p.lat,p.lon])) continue;
+    const pt=map.latLngToContainerPoint([p.lat,p.lon]), w=p.n.length*7+14;
+    const box=[pt.x-4,pt.y-10,pt.x+w,pt.y+10];
+    if(taken.some(q=>!(box[2]<q[0]||box[0]>q[2]||box[3]<q[1]||box[1]>q[3]))) continue;
+    if(isNearTrip(pt)) continue;
+    taken.push(box);
+    labelLayer.addLayer(L.marker([p.lat,p.lon],{pane:"labels",interactive:false,keyboard:false,
+      icon:L.divIcon({className:"city"+(p.p>=1e6?" big":""),html:`<i></i><span>${esc(p.n)}</span>`,iconSize:null,iconAnchor:[3,3]})}));
+  }
+  const st=z>=9&&!streetsOff; $("map").classList.toggle("streets",st);
+  if(streets){ if(st&&!map.hasLayer(streets)) streets.addTo(map); else if(!st&&map.hasLayer(streets)) map.removeLayer(streets); }
+  $("map").classList.toggle("zoomed",z>=13);
+  if(z>=13){ if(!map.hasLayer(placeLayer)) placeLayer.addTo(map); setTimeout(layoutSpots); } else if(map.hasLayer(placeLayer)) map.removeLayer(placeLayer);
+}
+function isNearTrip(pt){ // не подписываем город прямо под значком поездки
+  return trips.some(t=>{ if(!isFinite(t.lat)) return false; const q=map.latLngToContainerPoint([t.lat,t.lon]); return Math.abs(q.x-pt.x)<40&&pt.y>q.y-60&&pt.y<q.y+12; })
+    || (()=>{const q=map.latLngToContainerPoint([HOME.lat,HOME.lon]);return Math.abs(q.x-pt.x)<30&&Math.abs(q.y-pt.y)<14})();
+}
+function arc(a,b){ // плавная дуга между двумя точками
+  const pts=[], la0=a.lat,lo0=a.lon,la1=b.lat,lo1=b.lon, dx=lo1-lo0, dy=la1-la0, k=.18;
+  const mx=(lo0+lo1)/2 - dy*k, my=(la0+la1)/2 + dx*k*.55;
+  for(let i=0;i<=40;i++){const t=i/40,u=1-t; pts.push([u*u*la0+2*u*t*my+t*t*la1, u*u*lo0+2*u*t*mx+t*t*lo1]);}
+  return pts;
+}
+function popupHtml(t){
+  const ph=(t.photos||[]).slice(0,3), d=isFinite(t.lat)?km(HOME,t):null;
+  return `<div class="pop"><h5>${esc(t.title)}</h5>
+    <div class="pm">${t.date?esc(fmtRange(t)):"дата не указана"}${d!=null?` · ≈ ${d.toLocaleString("ru-RU")} км от дома`:""} · ${(t.photos||[]).length} фото</div>
+    ${ph.length?`<div class="pth">${ph.map(p=>`<img src="${esc(photoUrl(p))}" alt="">`).join("")}</div>`:""}
+    <div class="row"><button class="primary" data-open="1">Открыть альбом</button><button class="ghost" data-zoom="${esc(t.id)}">Приблизить</button></div></div>`;
+}
+function refreshSel(){
+  for(const id in tripMarkers){ const el=tripMarkers[id].getElement(); if(el) el.classList.toggle("sel",id===selectedId); }
+  for(const id in tripRoutes){ tripRoutes[id].setStyle({weight:id===selectedId?3:2,opacity:id===selectedId?.95:.5}); }
+}
+function spotPopup(t,p){
+  const ph=(t.photos||[]).filter(x=>x.chapter===p.chapter), first=ph[0];
+  return `<div class="pop"><h5>${esc(p.name)}</h5>
+    <div class="pm">${esc(t.title)}${ph.length?` · ${ph.length} фото`:""}${p.approx?" · место отмечено примерно":""}</div>
+    ${first?`<img class="pop-one" src="${esc(photoUrl(first))}" alt="">${first.short?`<p class="pop-cap">${esc(first.short)}</p>`:""}`:""}
+    <div class="row"><button class="primary" data-chgo="${esc(p.chapter)}" data-trip="${esc(t.id)}">Открыть главу «${esc(p.chapter)}»</button></div></div>`;
+}
+function layoutSpots(){ // подпись уходит влево, если справа мешает соседнее место
+  if(!map||!map.hasLayer(placeLayer)) return; const ms=[]; placeLayer.eachLayer(m=>ms.push(m));
+  const pts=ms.map(m=>map.latLngToContainerPoint(m.getLatLng()));
+  ms.forEach((m,i)=>{ const el=m.getElement(); if(!el) return; const w=(m.options.title||"").length*7.8+26, pt=pts[i];
+    const clash=pts.some((q,j)=>j!==i&&q.x>pt.x&&q.x<pt.x+w&&Math.abs(q.y-pt.y)<20);
+    el.classList.toggle("left",clash); });
+}
+function goChapter(name){
+  const el=[...document.querySelectorAll("[data-ch]")].find(c=>c.dataset.ch===name);
+  (el||$("tripView")).scrollIntoView({behavior:"smooth",block:"start"});
+}
+function drawMap(){
+  if(!map) return;
+  routeLayer.clearLayers(); tripLayer.clearLayers(); placeLayer.clearLayers(); tripMarkers={}; tripRoutes={};
+  const acc=tok("--green");
+  routeLayer.addLayer(L.marker([HOME.lat,HOME.lon],{interactive:false,keyboard:false,icon:L.divIcon({className:"home-pin",html:"<i></i><span>Москва · дом</span>",iconSize:null,iconAnchor:[9,9]})}));
+  trips.forEach((t,i)=>{
+    if(!isFinite(t.lat)) return; const sel=t.id===selectedId;
+    const r=L.polyline(arc(HOME,t),{color:acc,weight:sel?3:2,opacity:sel?.95:.5,dashArray:"2 7",lineCap:"round",interactive:false}); routeLayer.addLayer(r); tripRoutes[t.id]=r;
+    const ph=(t.photos||[])[0];
+    const icon=L.divIcon({className:"trip-pin"+(sel?" sel":"")+((t.places||[]).length?" has-places":""),iconSize:null,iconAnchor:[24,56],popupAnchor:[0,-54],
+      html:`<div class="tp"><div class="tp-img">${ph?`<img src="${esc(photoUrl(ph))}" alt="">`:""}</div><b>${i+1}</b><span class="tp-name">${esc(t.title)}</span></div>`});
+    const m=L.marker([t.lat,t.lon],{icon,title:t.title,riseOnHover:true,alt:t.title});
+    m.bindPopup(()=>popupHtml(t),{maxWidth:280,minWidth:230,autoPanPadding:[20,20]});
+    m.on("click",()=>{ if(picking) return; selectedId=t.id; try{localStorage.setItem("sel",t.id)}catch(e){}; renderStats(); renderTrip(); refreshSel(); });
+    tripLayer.addLayer(m); tripMarkers[t.id]=m;
+    (t.places||[]).forEach(p=>{
+      if(!isFinite(p.lat)) return;
+      placeLayer.addLayer(L.marker([p.lat,p.lon],{title:p.name+(p.approx?" (примерно)":""),
+        icon:L.divIcon({className:"spot",html:`<i></i><span>${esc(p.name)}${p.approx?" <em>≈</em>":""}</span>`,iconSize:null,iconAnchor:[7,7]})})
+        .bindPopup(()=>spotPopup(t,p),{maxWidth:270,minWidth:220,autoPanPadding:[20,20]}));
+    });
+  });
+  if(pickTarget&&isFinite(pickTarget.lat)) routeLayer.addLayer(L.circleMarker([pickTarget.lat,pickTarget.lon],{radius:9,color:acc,weight:3,fill:false,interactive:false}));
+  updateZoomLayers();
+}
+function fitMine(){
+  if(!map) return; const pts=[[HOME.lat,HOME.lon],...trips.filter(t=>isFinite(t.lat)).map(t=>[t.lat,t.lon])];
+  if(pts.length<2){map.setView(pts[0],5);return}
+  map.fitBounds(L.latLngBounds(pts).pad(.35),{maxZoom:7,paddingTopLeft:[30,70],paddingBottomRight:[30,20]});
+}
+function startPick(){picking=true;$("map").classList.add("picking");$("pickHint").hidden=false;$("tripDlg").close();$("map").scrollIntoView({behavior:"smooth",block:"center"})}
+function stopPick(done){picking=false;$("map").classList.remove("picking");$("pickHint").hidden=true;drawMap();$("tripDlg").showModal();if(done){$("fCity").value="";updCoords()}}
+$("pickCancel").onclick=e=>{e.stopPropagation();stopPick(false)};
+function setZoomBtn(which){zoom=which;$("zMine").setAttribute("aria-pressed",String(which==="mine"));$("zWorld").setAttribute("aria-pressed",String(which==="world"))}
+$("zMine").onclick=()=>{setZoomBtn("mine");fitMine()};
+$("zWorld").onclick=()=>{setZoomBtn("world");if(map)map.fitBounds(WORLD_BOUNDS)};
+
+/* ---------- список и статистика ---------- */
+function sortTrips(){trips.sort((a,b)=>(a.date||"9999").localeCompare(b.date||"9999")||(a.createdAt||0)-(b.createdAt||0))}
+function plural(n,f){const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b>1&&b<5?f[1]:b===1?f[0]:f[2]}
+function tripYear(t){return (t.date||"").slice(0,4)||"Без даты"}
+function tripCountry(t){return (t.country||"").trim()||"Россия"}
+const CAN_PRINT=true; // окно печати работает только на опубликованном сайте
+let groupBy="year", viewMode="map", searchQuery="", bookMode=false;
+try{bookMode=localStorage.getItem("tripReadingMode")==="book"}catch(e){}
+try{groupBy=localStorage.getItem("groupBy")==="country"?"country":"year";viewMode=localStorage.getItem("tripViewMode")==="catalog"?"catalog":"map"}catch(e){}
+function matchesSearch(t){
+  const q=searchQuery.trim().toLocaleLowerCase("ru");
+  if(!q) return true;
+  const photoText=(t.photos||[]).flatMap(p=>[p.short,p.caption,p.chapter]).filter(Boolean).join(" ");
+  const factTextAll=(t.facts||[]).flatMap(f=>[f.q,f.title,f.text,f.chapter]).filter(Boolean).join(" ");
+  const placeText=(t.places||[]).map(p=>p.name).join(" ");
+  const notesText=Object.values(t.notes||{}).join(" ");
+  return [t.title,t.place,t.country,t.date,t.dateTo,(t.chapters||[]).join(" "),photoText,factTextAll,placeText,notesText]
+    .filter(Boolean).join(" ").toLocaleLowerCase("ru").includes(q);
+}
+function filteredTrips(){return trips.filter(matchesSearch)}
+function setGroupBy(g){groupBy=g;try{localStorage.setItem("groupBy",g)}catch(e){};$("gYear").setAttribute("aria-pressed",String(g==="year"));$("gCountry").setAttribute("aria-pressed",String(g==="country"));renderTripList()}
+$("gYear").onclick=()=>setGroupBy("year"); $("gCountry").onclick=()=>setGroupBy("country");
+function setViewMode(mode){
+  viewMode=mode;
+  try{localStorage.setItem("tripViewMode",mode)}catch(e){}
+  $("vMap").setAttribute("aria-pressed",String(mode==="map"));
+  $("vCatalog").setAttribute("aria-pressed",String(mode==="catalog"));
+  $("mapcard").classList.toggle("catalog-mode",mode==="catalog");
+  if(mode==="map"&&typeof map!=="undefined"&&map) setTimeout(()=>map.invalidateSize(),60);
+  renderTripList();
+}
+$("vMap").onclick=()=>setViewMode("map"); $("vCatalog").onclick=()=>setViewMode("catalog");
+$("tripSearch").addEventListener("input",()=>{ searchQuery=$("tripSearch").value; $("clearSearch").hidden=!searchQuery; renderTripList(); });
+$("clearSearch").onclick=()=>{$("tripSearch").value="";searchQuery="";$("clearSearch").hidden=true;renderTripList();$("tripSearch").focus()};
+document.addEventListener("keydown",e=>{
+  if(e.key==="/"&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||"")&&!document.querySelector("dialog[open]")){e.preventDefault();$("tripSearch").focus()}
+  if(e.key==="Escape"&&$("tripSearch").value&&!document.querySelector("dialog[open]")){$("tripSearch").value="";searchQuery="";$("clearSearch").hidden=true;renderTripList()}
+});
+setTimeout(()=>{ if(viewMode==="catalog") setViewMode("catalog") });
+function renderTripList(){
+  const box=$("tripChips"), results=filteredTrips(), note=$("tripCountNote");
+  if(note) note.textContent=searchQuery.trim()?`Найдено ${results.length} из ${trips.length}`
+    :(viewMode==="catalog"?`Коллекция путешествий · ${trips.length} ${plural(trips.length,["поездка","поездки","поездок"])}`:"");
+  if(!trips.length){box.innerHTML=`<span class="ro">Пока нет поездок</span>`;return}
+  if(!results.length){box.innerHTML=`<div class="empty">Ничего не найдено. Попробуй изменить запрос.</div>`;return}
+  if(viewMode==="catalog"){
+    box.innerHTML=`<div class="catalog-grid">${results.map(t=>{
+      const ph=(t.photos||[])[0], count=(t.photos||[]).length, chapters=(t.chapters||[]).length;
+      const summary=(t.notes&&t.notes.text)||((t.facts||[])[0]||{}).text||"Фотографии и впечатления из этой поездки.";
+      return `<button class="catalog-card" data-id="${esc(t.id)}" aria-current="${t.id===selectedId}">
+        <span class="catalog-cover">${ph?`<img loading="lazy" src="${esc(photoUrl(ph))}" alt="">`:`<span class="catalog-placeholder">✧</span>`}</span>
+        <span class="catalog-copy"><span class="catalog-title">${esc(t.title)}</span>
+        <span class="catalog-meta">${esc(fmtRange(t)||"Дата не указана")} · ${esc(tripCountry(t))}</span>
+        <span class="catalog-summary">${esc(summary)}</span>
+        <span class="catalog-tags"><span class="catalog-tag">${count} фото</span>${chapters?`<span class="catalog-tag">${chapters} ${plural(chapters,["глава","главы","глав"])}</span>`:""}</span></span>
+      </button>`;
+    }).join("")}</div>`;
+    box.querySelectorAll(".catalog-card").forEach(b=>b.onclick=()=>select(b.dataset.id));
+    return;
+  }
+  const key=groupBy==="country"?tripCountry:tripYear, groups=new Map();
+  results.forEach(t=>{const i=trips.indexOf(t), k=key(t); if(!groups.has(k)) groups.set(k,[]); groups.get(k).push({t,i})});
+  const names=[...groups.keys()];
+  if(groupBy==="year") names.sort((a,b)=>b.localeCompare(a)); else names.sort((a,b)=>groups.get(b).length-groups.get(a).length||a.localeCompare(b,"ru"));
+  box.innerHTML=names.map(n=>{const list=groups.get(n);return `<div class="tgroup"><button class="tg-name" data-g="${esc(n)}" title="Показать на карте">${esc(n)}<small>${list.length} ${plural(list.length,["поездка","поездки","поездок"])}</small></button>
+    <div class="tg-list">${list.map(({t,i})=>`<button class="chip" data-id="${esc(t.id)}" aria-current="${t.id===selectedId}">${i+1}. ${esc(t.title)}${groupBy==="country"&&t.date?` <span class="chip-y">${esc(tripYear(t))}</span>`:""}</button>`).join("")}</div></div>`}).join("");
+  box.querySelectorAll(".chip").forEach(b=>b.onclick=()=>select(b.dataset.id));
+  box.querySelectorAll(".tg-name").forEach(b=>b.onclick=()=>fitGroup(groups.get(b.dataset.g).map(x=>x.t)));
+}
+function fitGroup(list){
+  if(typeof map==="undefined"||!map) return; const pts=list.filter(t=>isFinite(t.lat)).map(t=>[t.lat,t.lon]); if(!pts.length) return;
+  if(typeof setZoomBtn==="function") setZoomBtn("");
+  if(pts.length===1) map.flyTo(pts[0],Math.max(map.getZoom(),7),{duration:1}); else map.flyToBounds(L.latLngBounds(pts).pad(.3),{maxZoom:8,duration:1});
+  $("map").scrollIntoView({behavior:"smooth",block:"center"});
+}
+setTimeout(()=>{ if(groupBy==="country") setGroupBy("country") });
+function renderStats(){
+  $("sTrips").textContent=trips.length;
+  $("sPhotos").textContent=trips.reduce((s,t)=>s+(t.photos||[]).length,0);
+  const far=trips.filter(t=>isFinite(t.lat)).map(t=>km(HOME,t)); $("sFar").textContent=far.length?Math.max(...far).toLocaleString("ru-RU"):"—";
+  const nCountries=new Set(trips.map(tripCountry)).size;
+  $("sCountries").textContent=nCountries; $("lCountries").textContent=plural(nCountries,["страна","страны","стран"]);
+  $("lTrips").textContent=plural(trips.length,["поездка","поездки","поездок"]);
+  renderTripList(); renderPassport();
+}
+function select(id){selectedId=id;try{localStorage.setItem("sel",id)}catch(e){};renderAll();$("tripView").scrollIntoView({behavior:"smooth",block:"start"})}
+function current(){return trips.find(t=>t.id===selectedId)}
+function renderAll(){renderStats();drawMap();renderTrip()}
+
+/* ---------- разворот поездки ---------- */
+function renderTrip(){
+  const t=current(), v=$("tripView");
+  v.classList.remove("book-mode");
+  if(!t){v.innerHTML=trips.length?`<div class="empty">Выбери точку на карте, чтобы открыть альбом.</div>`:`<div class="empty">Здесь появится первая поездка.${db?" Нажми «Новая поездка» над картой.":""}</div>`;return}
+  const photos=t.photos||[]; const chs=[...(t.chapters||[])];
+  photos.forEach(p=>{if(p.chapter&&!chs.includes(p.chapter))chs.push(p.chapter)});
+  const groups=chs.map(c=>({name:c,items:photos.map((p,i)=>({...p,i})).filter(p=>p.chapter===c)}));
+  const loose=photos.map((p,i)=>({...p,i})).filter(p=>!p.chapter);
+  if(loose.length) groups.push({name:groups.length?"Без главы":"Фото",items:loose});
+  lbList=groups.flatMap(g=>g.items);
+  const dist=isFinite(t.lat)?km(HOME,t):null;
+  const canW=!!db;
+  if(bookMode){ renderBookTrip(t,groups,photos,canW,dist); return; }
+  const cp=coverPhoto(t);
+  let h=(cp?`<div class="cover"><div class="cover-img"><img src="${esc(photoUrl(cp))}" alt=""></div><div class="cover-txt"><div class="cover-k">${esc([tripCountry(t),fmtRange(t)].filter(Boolean).join(" · "))}</div><h2>${esc(t.title)}</h2><div class="cover-m">${esc([t.place,dist!=null?`≈ ${dist.toLocaleString("ru-RU")} км от дома`:""].filter(Boolean).join(" · "))}</div></div><div class="pmark">${stampSvg(t)}</div></div>`:"")+`<div class="trip-head${cp?" slim":""}"><div>
+     <span class="stamp"><span>${esc(t.place||t.title)}</span><span>${t.date?esc(fmtRange(t)):"дата не указана"}</span></span>
+     <h2>${esc(t.title)}</h2>
+     <div class="meta">${dist!=null?`≈ ${dist.toLocaleString("ru-RU")} км от дома · `:""}<span class="coords">${isFinite(t.lat)?esc(fmtCoord(t.lat,t.lon)):""}</span></div>
+   </div>
+   <div class="row"><button class="ghost" id="bookModeBtn">Книга</button>${CAN_PRINT?`<button class="ghost" id="printTrip">Печать / PDF</button>`:""}${canW?`<button class="ghost" id="editTrip">Изменить</button>`:""}${assets?`<button class="primary" id="addPhotos">+ Фото</button>`:""}</div></div>
+   <div class="prog" id="upProg" hidden></div>`;
+  if(!photos.length) h+=`<div class="empty">Фотографий пока нет.${assets?" Нажми «+ Фото», чтобы добавить.":""}</div>`;
+  for(const g of groups){ if(!g.items.length) continue;
+    h+=`<div class="chapter" data-ch="${esc(g.name)}"><h3><span class="fl" aria-hidden="true">❦</span>${esc(g.name)} <small>${g.items.length} фото</small></h3><div class="grid">`+
+      g.items.map(p=>{const li=lbList.findIndex(x=>x.i===p.i);return `<figure><button class="ph" data-lb="${li}" aria-label="Открыть фото"><img loading="lazy" src="${esc(photoUrl(p))}" alt="${esc(p.caption||"Фото из поездки")}"></button>
+        <figcaption><div class="capt">${p.short?`<div class="capt-short">${esc(p.short)}</div>${p.caption?`<details class="more"><summary>Подробнее</summary><div class="more-body">${esc(p.caption)}</div></details>`:""}`:`<span>${esc(p.caption||"")}</span>`}</div>${canW?`<button class="edit" data-ed="${p.i}" aria-label="Изменить подпись">✎</button>`:""}</figcaption></figure>`}).join("")+`</div>${factsHtml(t,g.name)}</div>`}
+  h+=factsHtml(t,null,new Set(groups.filter(g=>g.items.length).map(g=>g.name)));
+  h+=epigraphHtml(t);
+  const notes=t.notes||{};
+  if(canW||NOTE_FIELDS.some(([k])=>(notes[k]||"").trim())) h+=`<div class="chapter"><h3><span class="fl" aria-hidden="true">❦</span>Главное о поездке</h3><div class="notes">`+NOTE_FIELDS.map(([k,l])=>`<div class="note">${l?`<label for="n_${k}">${l}</label>`:""}
+     ${canW?`<textarea id="n_${k}" data-k="${k}" aria-label="Главное о поездке" maxlength="6000" placeholder="Что запомнилось, удивило, понравилось…">${esc(notes[k]||"")}</textarea><span class="saved" id="ns_${k}"></span>`:`<div class="note-text">${esc(notes[k]||"")}</div>`}</div>`).join("")+`</div></div>`;
+  v.innerHTML=h;
+  v.querySelectorAll("[data-lb]").forEach(b=>b.onclick=()=>openLb(+b.dataset.lb));
+  v.querySelectorAll("[data-ed]").forEach(b=>b.onclick=()=>openPhotoEdit(+b.dataset.ed));
+  v.querySelectorAll(".note textarea").forEach(ta=>ta.addEventListener("blur",()=>saveNote(ta.dataset.k,ta.value)));
+  if($("printTrip")) $("printTrip").onclick=()=>window.print();
+  if($("bookModeBtn")) $("bookModeBtn").onclick=()=>setBookMode(true);
+  if($("editTrip")) $("editTrip").onclick=()=>openTripDlg(t);
+  if($("addPhotos")) $("addPhotos").onclick=()=>$("fileIn").click();
+}
+function setBookMode(on){
+  bookMode=!!on;
+  try{localStorage.setItem("tripReadingMode",bookMode?"book":"album")}catch(e){}
+  renderTrip();
+  if($("tripView")) $("tripView").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function renderBookTrip(t,groups,photos,canW,dist){
+  const v=$("tripView"); v.classList.add("book-mode");
+  const cover=photos[0];
+  const intro=(t.notes&&t.notes.text||"").trim() || ((t.facts||[]).find(f=>!f.chapter)||{}).text || "Этот альбом сохраняет места, открытия и впечатления нашей поездки.";
+  const date=t.date?fmtRange(t):"Дата не указана";
+  const chapters=groups.filter(g=>g.items.length);
+  const globalFacts=factsHtml(t,null,new Set(chapters.map(g=>g.name)));
+  const notes=t.notes||{};
+  let h=`<div class="book-toolbar"><span class="book-label">Путевой дневник · ${esc(tripCountry(t))}</span><div class="row"><button class="ghost" id="albumModeBtn">Обычный альбом</button>${CAN_PRINT?`<button class="ghost" id="printTrip">Печать / PDF</button>`:""}${canW?`<button class="ghost" id="editTrip">Изменить</button>`:""}${assets?`<button class="primary" id="addPhotos">+ Фото</button>`:""}</div></div>
+    <div class="prog" id="upProg" hidden></div>`;
+  h+=`<header class="book-cover">${cover?`<img src="${esc(photoUrl(cover))}" alt="Обложка: ${esc(t.title)}">`:""}<div class="book-kicker">История путешествия</div><h2>${esc(t.title)}</h2><div class="book-subtitle">${esc(t.place||tripCountry(t))}${dist!=null?` · около ${dist.toLocaleString("ru-RU")} км от дома`:""}</div><div class="book-date">${esc(date)}</div></header>`;
+  h+=`<div class="book-intro">${esc(intro)}</div>`;
+  if(chapters.length) h+=`<nav class="book-toc" aria-label="Содержание книги"><h3>Содержание</h3><ol>${chapters.map((g,i)=>`<li><a href="#book-ch-${i}" data-book-go="book-ch-${i}">${esc(g.name)} <span style="margin-left:auto;color:var(--muted);font-size:12px">${g.items.length} фото</span></a></li>`).join("")}${globalFacts?`<li><a href="#book-facts" data-book-go="book-facts">Истории и факты</a></li>`:""}${(canW||(notes.text||"").trim())?`<li><a href="#book-notes" data-book-go="book-notes">Главное о поездке</a></li>`:""}</ol></nav>`;
+  chapters.forEach((g,i)=>{
+    h+=`<section class="book-chapter" id="book-ch-${i}" data-ch="${esc(g.name)}"><div class="book-chapter-no">Глава ${String(i+1).padStart(2,"0")}</div><h3>${esc(g.name)}</h3><div class="grid">`+
+      g.items.map(p=>{const li=lbList.findIndex(x=>x.i===p.i);return `<figure><button class="ph" data-lb="${li}" aria-label="Открыть фото"><img loading="lazy" src="${esc(photoUrl(p))}" alt="${esc(p.short||p.caption||"Фото из поездки")}"></button><figcaption><div class="capt">${p.short?`<div class="capt-short">${esc(p.short)}</div>`:""}${p.caption?`<div class="more-body">${esc(p.caption)}</div>`:""}</div>${canW?`<button class="edit" data-ed="${p.i}" aria-label="Изменить подпись">✎</button>`:""}</figcaption></figure>`}).join("")+`</div>${factsHtml(t,g.name)}</section>`;
+  });
+  if(globalFacts) h+=`<section class="book-facts-end" id="book-facts">${globalFacts}</section>`;
+  h+=epigraphHtml(t);
+  if(canW||(notes.text||"").trim()) h+=`<section class="book-endnote" id="book-notes"><h3>Главное о поездке</h3><div class="note">${canW?`<textarea id="n_text" data-k="text" aria-label="Главное о поездке" maxlength="6000" placeholder="Что запомнилось, удивило, понравилось…">${esc(notes.text||"")}</textarea><span class="saved" id="ns_text"></span>`:`<div class="note-text">${esc(notes.text||"")}</div>`}</div></section>`;
+  h+=`<a class="book-backtop" href="#tripView" data-book-go="tripView">↑ В начало книги</a>`;
+  v.innerHTML=h;
+  v.querySelectorAll("[data-lb]").forEach(b=>b.onclick=()=>openLb(+b.dataset.lb));
+  v.querySelectorAll("[data-ed]").forEach(b=>b.onclick=()=>openPhotoEdit(+b.dataset.ed));
+  v.querySelectorAll(".note textarea").forEach(ta=>ta.addEventListener("blur",()=>saveNote(ta.dataset.k,ta.value)));
+  v.querySelectorAll("[data-book-go]").forEach(a=>a.onclick=e=>{e.preventDefault();$(a.dataset.bookGo)?.scrollIntoView({behavior:"smooth",block:"start"})});
+  if($("albumModeBtn")) $("albumModeBtn").onclick=()=>setBookMode(false);
+  if($("printTrip")) $("printTrip").onclick=()=>window.print();
+  if($("editTrip")) $("editTrip").onclick=()=>openTripDlg(t);
+  if($("addPhotos")) $("addPhotos").onclick=()=>$("fileIn").click();
+}
+function coverPhoto(t){const ph=t.photos||[]; if(!ph.length) return null; const n=+t.cover; return ph[(n>=1&&n<=ph.length)?n-1:0];}
+function stampSvg(t){
+  const id="pm"+Math.random().toString(36).slice(2,9);
+  const top=String(t.title||"").toUpperCase(), bot=String(t.place||tripCountry(t)||"").toUpperCase();
+  const fs=s=>Math.min(11,128/(Math.max(6,s.length)*0.95)).toFixed(1);
+  const r=fmtRange(t)||""; const y=r.match(/^(.*?)\s(\d{4})$/); const dm=y?y[1]:r, yr=y?y[2]:"";
+  const sp=dm.match(/^([\d–\-\s]+?)\s+([^\d].*)$/); const day=sp?sp[1]:dm, mon=sp?sp[2]:"";
+  const ds=Math.min(17,70/Math.max(1,day.length)*1.6).toFixed(1), ms=Math.min(11,62/Math.max(1,mon.length)*1.7).toFixed(1);
+  const arc=(s,path)=>`<text class="pm-t" style="font-size:${fs(s)}px;letter-spacing:${(fs(s)*.2).toFixed(1)}px"><textPath href="#${id}${path}" startOffset="50%" text-anchor="middle">${esc(s)}</textPath></text>`;
+  return `<svg viewBox="0 0 132 132" aria-hidden="true"><defs><path id="${id}a" d="M22,66 a44,44 0 1,1 88,0"/><path id="${id}b" d="M14,66 a52,52 0 0,0 104,0"/></defs>`+
+    `<circle class="pm-ink" cx="66" cy="66" r="62"/><circle class="pm-ink" cx="66" cy="66" r="57" stroke-width="1"/><circle class="pm-ink" cx="66" cy="66" r="36" stroke-width="1.2"/>`+
+    arc(top,"a")+arc(bot,"b")+
+    `<text class="pm-d" x="66" y="${mon?62:70}" text-anchor="middle" style="font-size:${ds}px">${esc(day)}</text>`+
+    (mon?`<text class="pm-m" x="66" y="76" text-anchor="middle" style="font-size:${ms}px">${esc(mon)}</text>`:"")+
+    (yr?`<text class="pm-m" x="66" y="${mon?90:86}" text-anchor="middle">${yr}</text>`:"")+
+    `<path class="pm-ink" d="M2,44 q8,-6 16,0 t16,0 M0,90 q8,-6 16,0 t16,0" stroke-width="1.3" opacity=".7"/></svg>`;
+}
+function renderPassport(){
+  const el=$("passport"); if(!el) return;
+  const list=[...trips].sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+  el.innerHTML=list.length?`<span class="lbl">Штемпели</span>`+list.map(t=>`<button type="button" class="pmark" data-pm="${esc(t.id)}" title="${esc(t.title)}" aria-label="Открыть поездку «${esc(t.title)}»">${stampSvg(t)}</button>`).join("")+`<span class="empty-st" aria-hidden="true">следу&shy;ющая<br>поездка</span>`:"";
+  el.querySelectorAll("[data-pm]").forEach(b=>b.onclick=()=>{ selectedId=b.dataset.pm; try{localStorage.setItem("sel",selectedId)}catch(e){}
+    renderStats(); renderTrip(); refreshSel(); $("tripView").scrollIntoView({behavior:"smooth",block:"start"}); });
+}
+function factText(s){ // «…» в тексте факта показываем как цитату
+  return esc(s).replace(/«([^»]+)»/g,(m,q)=>/\s/.test(q)&&q.length>25?`<q>${q}</q>`:m);
+}
+function factsHtml(t,ch,shown){
+  const list=(t.facts||[]).filter(f=>ch!=null?f.chapter===ch:!(shown&&shown.has(f.chapter)));
+  if(!list.length) return "";
+  const head=(t.factsTitle&&t.factsTitle[ch||""])||"Интересные факты";
+  if(list.some(f=>f.q)){ // формат загадок: вопрос → по нажатию ответ
+    const rd=(f,i)=>{const n=String(i+1).padStart(2,"0");return `<button type="button" class="rd" aria-expanded="false"><span class="rd-n">${n}</span><span class="rd-q">${esc(f.q)}</span><span class="rd-a"><b>${esc(f.title)}</b><span>${factText(f.text)}</span></span><span class="rd-tap">Нажми, чтобы узнать →</span></button>`;};
+    return `<aside class="facts"><h4>${esc(head)}</h4><p class="rd-hint">Попробуй ответить сам, а потом открой карточку</p><div class="riddles">${list.filter(f=>f.q).map(rd).join("")}</div>`+
+      `${t.factsSource?`<small>${esc(t.factsSource).replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,(m,w,u)=>`<a href="${u}" target="_blank" rel="noopener">${w}</a>`)}</small>`:""}</aside>`;
+  }
+  const card=f=>`<div class="fact"><b>${esc(f.title)}</b><p>${factText(f.text)}</p></div>`;
+  const top=list.filter(f=>f.top), rest=list.filter(f=>!f.top), split=top.length&&rest.length;
+  return `<aside class="facts"><h4>${esc(head)}</h4><div class="factgrid">`+(split?top:list).map(card).join("")+`</div>`+
+    (split?`<details class="more-facts"><summary>Ещё истории (${rest.length})</summary><div class="factgrid">${rest.map(card).join("")}</div></details>`:"")+
+    `${t.factsSource?`<small>${esc(t.factsSource).replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,(m,w,u)=>`<a href="${u}" target="_blank" rel="noopener">${w}</a>`)}</small>`:""}</aside>`;
+}
+function epigraphHtml(t){
+  const e=t.epigraph; if(!e||!e.lines||!e.lines.length) return "";
+  return `<figure class="epi"><blockquote>${e.lines.map(esc).join("<br>")}</blockquote>${e.source?`<figcaption>${esc(e.source)}</figcaption>`:""}${e.prompt?`<p class="epi-q">${esc(e.prompt)}</p>`:""}</figure>`;
+}
+async function saveNote(k,val){
+  const t=current(); if(!t||!db) return; const old=(t.notes||{})[k]||""; if(old===val) return;
+  const notes={...(t.notes||{}),[k]:val};
+  try{await db.collection("trips").doc(t.id).update({notes}); t.notes=notes; const s=$("ns_"+k); if(s){s.textContent="Сохранено";setTimeout(()=>{if(s)s.textContent=""},1800)}}
+  catch(e){toast(e.code==="not_granted"?"Нет прав на изменение":"Не сохранилось, попробуй ещё раз")}
+}
+
+/* ---------- лайтбокс ---------- */
+function openLb(i){lbIdx=i;showLb();$("lb").showModal()}
+function showLb(){const p=lbList[lbIdx];if(!p)return;$("lbImg").src=photoUrl(p);$("lbImg").alt=p.caption||"";$("lbCap").textContent=([p.short,p.caption].filter(Boolean).join(" — "))+`  ·  ${lbIdx+1} из ${lbList.length}`}
+$("lbPrev").onclick=()=>{lbIdx=(lbIdx-1+lbList.length)%lbList.length;showLb()};
+$("lbNext").onclick=()=>{lbIdx=(lbIdx+1)%lbList.length;showLb()};
+$("lbClose").onclick=()=>$("lb").close();
+$("lb").addEventListener("keydown",e=>{if(e.key==="ArrowLeft")$("lbPrev").click();if(e.key==="ArrowRight")$("lbNext").click()});
+$("lb").addEventListener("click",e=>{if(e.target===$("lb"))$("lb").close()});
+// книга: горизонтальные снимки — во всю ширину, чтобы рядом не оставалось пустот
+document.addEventListener("load",e=>{const im=e.target; if(im.tagName==="IMG"&&im.closest(".book-chapter .ph")&&im.naturalWidth>im.naturalHeight*1.1) im.closest("figure").classList.add("wide");
+  const g=im.closest(".grid"); if(!g) return; const figs=[...g.children], lead=figs.length%2?figs[0]:null;
+  const rest=figs.filter(x=>x!==lead&&!x.classList.contains("wide")); figs.forEach(x=>x.classList.remove("solo"));
+  if(rest.length%2) rest[rest.length-1].classList.add("solo");},true);
+document.addEventListener("click",e=>{const r=e.target.closest(".rd"); if(!r) return;
+  const open=r.getAttribute("aria-expanded")!=="true"; r.setAttribute("aria-expanded",open);
+  r.querySelector(".rd-tap").textContent=open?"← К вопросу":"Нажми, чтобы узнать →";});
+
+
+/* ---------- подпись к фото ---------- */
+function openPhotoEdit(i){const t=current();const p=t.photos[i];editPhotoIdx=i;$("pShort").value=p.short||"";$("pCaption").value=p.caption||"";$("pChapter").value=p.chapter||"";
+  const chs=new Set([...(t.chapters||[]),...t.photos.map(x=>x.chapter).filter(Boolean)]);$("chapterList").innerHTML=[...chs].map(c=>`<option value="${esc(c)}">`).join("");$("photoDlg").showModal()}
+$("pCancel").onclick=()=>$("photoDlg").close();
+$("photoForm").addEventListener("submit",async e=>{e.preventDefault();const t=current();const photos=t.photos.map(x=>({...x}));
+  photos[editPhotoIdx].caption=$("pCaption").value.trim();photos[editPhotoIdx].short=$("pShort").value.trim();photos[editPhotoIdx].chapter=$("pChapter").value.trim();
+  await savePhotos(t,photos);$("photoDlg").close()});
+$("pRemove").onclick=async()=>{const t=current();const photos=t.photos.filter((_,i)=>i!==editPhotoIdx);await savePhotos(t,photos);$("photoDlg").close()};
+async function savePhotos(t,photos){const clean=photos.map(({id,caption,chapter,short})=>({id,caption:caption||"",chapter:chapter||"",...(short?{short}:{})}));
+  try{await db.collection("trips").doc(t.id).update({photos:clean});t.photos=clean;renderAll()}catch(e){toast("Не сохранилось: "+(e.code||"ошибка"))}}
+
+/* ---------- загрузка фото ---------- */
+async function shrink(file){
+  const url=URL.createObjectURL(file);
+  try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url});
+    const max=1800, s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));
+    const c=document.createElement("canvas");c.width=Math.round(img.naturalWidth*s);c.height=Math.round(img.naturalHeight*s);
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    return await new Promise(r=>c.toBlob(r,"image/jpeg",.86));
+  } finally{URL.revokeObjectURL(url)}
+}
+$("fileIn").addEventListener("change",async e=>{
+  const files=[...e.target.files]; e.target.value=""; const t=current(); if(!t||!assets||!files.length) return;
+  const prog=$("upProg"); prog.hidden=false; const added=[]; let fail=0;
+  for(let i=0;i<files.length;i++){prog.textContent=`Загружаю ${i+1} из ${files.length}…`;
+    try{const blob=await shrink(files[i]); const r=await assets.upload(blob,{type:"image/jpeg"}); added.push({id:r.id,caption:"",chapter:""})}
+    catch(err){fail++}}
+  prog.hidden=true;
+  if(added.length) await savePhotos(t,[...(t.photos||[]),...added]);
+  toast(`Добавлено фото: ${added.length}`+(fail?`. Не получилось: ${fail} (формат HEIC лучше сохранить как JPG)`:""));
+});
+
+/* ---------- новая поездка / правка ---------- */
+let editingTrip=null;
+$("fCity").innerHTML=`<option value="">— другое место, укажу на карте —</option>`+CITIES.map(([n],i)=>`<option value="${i}">${esc(n)}</option>`).join("");
+function updCoords(){$("fCoords").textContent=pickTarget&&isFinite(pickTarget.lat)?fmtCoord(pickTarget.lat,pickTarget.lon):"не выбрана"}
+const COUNTRY_OF={"Минск":"Беларусь"};
+const COUNTRIES=["Россия","Беларусь","Казахстан","Армения","Грузия","Азербайджан","Узбекистан","Киргизия","Абхазия","Турция","Китай","ОАЭ","Египет","Сербия"];
+$("fCity").onchange=()=>{const v=$("fCity").value;if(v==="")return;const [n,la,lo]=CITIES[+v];pickTarget={lat:la,lon:lo};if(!$("fPlace").value)$("fPlace").value=n;$("fCountry").value=COUNTRY_OF[n]||"Россия";updCoords();drawMap()};
+$("fPick").onclick=startPick;
+function openTripDlg(t){
+  editingTrip=t||null; $("tripDlgTitle").textContent=t?"Изменить поездку":"Новая поездка";
+  $("fTitle").value=t?.title||""; $("fPlace").value=t?.place||""; $("fDate").value=t?.date||""; $("fDateTo").value=t?.dateTo||"";
+  $("fCountry").value=t?.country||""; $("countryList").innerHTML=[...new Set([...trips.map(tripCountry),...COUNTRIES])].map(c=>`<option value="${esc(c)}">`).join("");
+  $("fChapters").value=(t?.chapters||[]).join(", "); $("fCity").value=""; pickTarget=t?{lat:t.lat,lon:t.lon}:null; updCoords();
+  $("fErr").textContent=""; $("fDelete").hidden=!t; $("fConfirm").hidden=true; $("tripDlg").showModal();
+}
+$("addBtn").onclick=()=>openTripDlg(null);
+$("fCancel").onclick=()=>{pickTarget=null;$("tripDlg").close();drawMap()};
+$("fDelete").onclick=()=>{$("fConfirm").hidden=false};
+$("fDelNo").onclick=()=>{$("fConfirm").hidden=true};
+$("fDelYes").onclick=async()=>{try{await db.collection("trips").doc(editingTrip.id).delete();trips=trips.filter(x=>x.id!==editingTrip.id);selectedId=trips[0]?.id||null;$("tripDlg").close();renderAll();toast("Поездка удалена")}catch(e){$("fErr").textContent="Не удалось удалить"}};
+$("tripForm").addEventListener("submit",async e=>{
+  e.preventDefault(); const title=$("fTitle").value.trim();
+  if(!title){$("fErr").textContent="Напиши название поездки";return}
+  if(!pickTarget||!isFinite(pickTarget.lat)){$("fErr").textContent="Выбери место из списка или укажи точку на карте";return}
+  let d1=$("fDate").value||"", d2=$("fDateTo").value||"";
+  if(!d1&&d2){d1=d2;d2=""} if(d2&&d2<d1){[d1,d2]=[d2,d1]} if(d2===d1) d2="";
+  const data={title,country:$("fCountry").value.trim()||"Россия",place:$("fPlace").value.trim(),date:d1,dateTo:d2,lat:pickTarget.lat,lon:pickTarget.lon,
+    chapters:$("fChapters").value.split(",").map(s=>s.trim()).filter(Boolean)};
+  $("fSave").disabled=true;
+  try{
+    if(editingTrip){await db.collection("trips").doc(editingTrip.id).update(data);Object.assign(editingTrip,data);selectedId=editingTrip.id}
+    else{const full={...data,photos:[],notes:{},createdAt:Date.now()};const ref=await db.collection("trips").add(full);trips.push({id:ref.id,...full});selectedId=ref.id}
+    pickTarget=null; sortTrips(); $("tripDlg").close(); renderAll();
+  }catch(err){$("fErr").textContent="Не сохранилось: "+(err.code||"ошибка")}
+  finally{$("fSave").disabled=false}
+});
+
+
+/* ---------- викторина «Узнай место по фотографии» ---------- */
+const QZ_LEN=6; let qz=null, qzSeen=new Set();
+try{qzSeen=new Set(JSON.parse(localStorage.getItem("qzSeen")||"[]"))}catch(e){}
+function qzShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function qzPool(){
+  const multi=trips.length>1, out=[];
+  trips.forEach(t=>(t.photos||[]).forEach((p,i)=>{
+    const label=p.chapter?(multi?`${p.chapter} · ${t.title}`:p.chapter):t.title;
+    out.push({t,p,label,key:t.id+":"+(p.id||p.src||i)});
+  }));
+  return out;
+}
+function qzPick(list,n){ // по очереди из разных мест, чтобы снимки не шли подряд из одного зала
+  const g=new Map(); qzShuffle(list.slice()).forEach(x=>{if(!g.has(x.label))g.set(x.label,[]);g.get(x.label).push(x)});
+  const groups=qzShuffle([...g.values()]), out=[];
+  while(out.length<n&&groups.some(a=>a.length)) for(const a of groups){ if(a.length&&out.length<n) out.push(a.pop()) }
+  return qzShuffle(out);
+}
+function qzStart(){
+  const pool=qzPool(), labels=[...new Set(pool.map(x=>x.label))];
+  if(pool.length<2||labels.length<2){
+    $("qzBody").innerHTML=`<p class="qz-empty">Для викторины нужны фото хотя бы из двух разных мест. Разложи фото по главам альбома — и можно играть.</p>`; return;
+  }
+  const n=Math.min(QZ_LEN,pool.length);
+  let fresh=pool.filter(x=>!qzSeen.has(x.key));
+  let picks=qzPick(fresh,n);
+  if(picks.length<n){ qzSeen=new Set(); picks=picks.concat(qzPick(pool.filter(x=>!picks.includes(x)),n-picks.length)); }
+  picks.forEach(x=>qzSeen.add(x.key));
+  try{localStorage.setItem("qzSeen",JSON.stringify([...qzSeen]))}catch(e){}
+  const nOpt=Math.min(3,labels.length);
+  const items=picks.map(x=>{
+    const same=labels.filter(l=>l!==x.label&&pool.some(y=>y.label===l&&y.t.id===x.t.id));
+    const other=labels.filter(l=>l!==x.label&&!same.includes(l));
+    const wrong=[...qzShuffle(same),...qzShuffle(other)].slice(0,nOpt-1);
+    return {...x,options:qzShuffle([x.label,...wrong])};
+  });
+  qz={items,i:0,score:0,answers:[]};
+  qzRender();
+}
+function qzRender(){
+  const q=qz.items[qz.i], ans=qz.answers[qz.i], n=qz.items.length;
+  let h=`<div class="qz-progress"><span>Снимок <b>${qz.i+1}</b> из ${n}</span><span>Баллы: <b>${qz.score}</b></span></div>
+    <div class="qz-bar"><i style="width:${(qz.i+(ans?1:0))/n*100}%"></i></div>
+    <figure class="qz-ph"><img src="${esc(photoUrl(q.p))}" alt="Снимок из поездки — угадай место"></figure>`;
+  if(!ans) h+=`<p class="qz-q">Где сделан этот снимок?</p>`;
+  h+=`<div class="qz-opts">`+q.options.map((o,k)=>{
+    let cls="", mark="";
+    if(ans){ if(o===q.label){cls="ok";mark=`<span class="qz-mark" aria-label="правильный ответ">✓</span>`} else if(o===ans.choice){cls="bad";mark=`<span class="qz-mark" aria-label="неверно">✗</span>`} else cls="dim"; }
+    return `<button class="qz-opt ${cls}" data-o="${esc(o)}" ${ans?"disabled":""}><span class="qz-k">${k+1}</span><span>${esc(o)}</span>${mark}</button>`;
+  }).join("")+`</div>`;
+  if(ans){
+    h+=`<div class="qz-expl ${ans.ok?"ok":"bad"}"><b>${ans.ok?`Верно! Это ${esc(q.label)}.`:`Неверно. Правильный ответ — ${esc(q.label)}.`}</b>
+      ${q.p.short?`<p class="qz-short">${esc(q.p.short)}</p>`:""}${q.p.caption?`<p>${esc(q.p.caption)}</p>`:""}</div>
+      <div class="qz-actions"><button class="primary" id="qzNext">${qz.i+1<n?"Следующий снимок →":"Узнать результат"}</button></div>`;
+  }
+  $("qzBody").innerHTML=h;
+  $("qzBody").querySelectorAll(".qz-opt:not(:disabled)").forEach(b=>b.onclick=()=>qzAnswer(b.dataset.o));
+  if($("qzNext")){ $("qzNext").onclick=qzNext; $("qzNext").focus(); }
+}
+function qzAnswer(choice){
+  if(!qz||qz.answers[qz.i]) return;
+  const ok=choice===qz.items[qz.i].label; if(ok) qz.score++;
+  qz.answers[qz.i]={choice,ok}; qzRender();
+}
+function qzNext(){ if(qz.i+1<qz.items.length){qz.i++;qzRender()} else qzResult(); }
+function qzResult(){
+  const n=qz.items.length, s=qz.score, pct=s/n; let best=0;
+  try{best=+localStorage.getItem("qzBest")||0}catch(e){}
+  const record=s>best&&best>0; if(s>best) try{localStorage.setItem("qzBest",String(s))}catch(e){}
+  const verdict=pct===1?"Идеально! Ты отлично помнишь поездку.":pct>=.67?"Отлично! Почти все места узнаны.":pct>=.34?"Неплохо! Загляни в альбом и попробуй ещё раз.":"Полистай альбом — и сыграй снова, получится лучше.";
+  const left=qzPool().filter(x=>!qzSeen.has(x.key)).length;
+  $("qzBody").innerHTML=`<div class="qz-result">
+    <div class="qz-score">${s}<small>${plural(s,["балл","балла","баллов"])} из ${n}</small></div>
+    <p class="qz-verdict">${verdict}</p>
+    ${record?`<p class="qz-best">Новый рекорд!</p>`:best?`<p class="qz-best">Рекорд: ${Math.max(best,s)} из ${n}</p>`:""}
+    <div class="qz-review">${qz.items.map((q,k)=>`<figure class="${qz.answers[k].ok?"ok":"bad"}"><img src="${esc(photoUrl(q.p))}" alt=""><figcaption>${qz.answers[k].ok?"✓":"✗"} ${esc(q.label)}</figcaption></figure>`).join("")}</div>
+    <div class="qz-actions center"><button class="primary" id="qzAgain">Сыграть ещё раз</button><button class="ghost" id="qzDone">Закрыть</button></div>
+    <p class="qz-empty">${left?`В новой игре — другие снимки: ещё не показано ${left}.`:"Все снимки уже были — следующая игра начнёт новый круг."}</p>
+  </div>`;
+  $("qzAgain").onclick=qzStart; $("qzDone").onclick=()=>$("quizDlg").close(); $("qzAgain").focus();
+}
+$("quizBtn").onclick=()=>{ $("quizDlg").showModal(); qzStart(); };
+$("qzClose").onclick=()=>$("quizDlg").close();
+$("quizDlg").addEventListener("keydown",e=>{
+  if(!qz) return;
+  if(/^[1-3]$/.test(e.key)&&!qz.answers[qz.i]){ const o=qz.items[qz.i]?.options[+e.key-1]; if(o){e.preventDefault();qzAnswer(o)} }
+});
+
+/* ---------- запуск ---------- */
+initMap(); renderStats();
+fetch("trips.json").then(r=>r.json()).then(list=>{
+  trips=list; sortTrips();
+  let saved=null; try{saved=localStorage.getItem("sel")}catch(e){}
+  const fromHash=location.hash.slice(1);
+  selectedId=trips.find(t=>t.id===fromHash)?.id||trips.find(t=>t.id===saved)?.id||trips[trips.length-1]?.id||null;
+  renderAll(); fitMine();
+}).catch(()=>{$("tripView").innerHTML=`<div class="empty">Не удалось загрузить поездки.</div>`});
+</script>
+</body>
+</html>
